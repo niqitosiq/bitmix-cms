@@ -1,0 +1,24 @@
+{
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "name": "bitmix-cms",
+    "version": "0.0.1",
+    "main": "index.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "niqitosiq",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "eslint": "^9.6.0",
+        "prettier": "^3.3.2"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "^5.51.1",
+        "@tanstack/react-router": "^1.44.2",
+        "@tanstack/router-plugin": "^1.44.2"
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "baseUrl": "./",
+        "paths": {
+            "src/*": ["./src/*"],
+            "shared/*": ["./src/shared/*"],
+            "features/*": ["./src/features/*"],
+            "widgets/*": ["./src/widgets/*"],
+            "entities/*": ["./src/entities/*"],
+            "pages/*": ["./src/pages/*"]
+        }
+    },
+    "files": [],
+    "references": [
+        {
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ]
+}
