@@ -1,0 +1,44 @@
+version: '3'
+services:
+  cms:
+    container_name: "cms"
+    build:
+      context: .
+      dockerfile: ./packages/cms/Dockerfile.dev
+    ports:
+      - 5173:5173
+    volumes:
+      - ./packages/cms:/app/packages/cms
+    networks:
+      - bitmix-dev-network
+
+  api:
+    container_name: "api"
+    build:
+      context: .
+      dockerfile: ./packages/api/Dockerfile.dev
+    ports:
+      - 5000:5000
+    volumes:
+      - ./packages/api:/app/packages/api
+    networks:
+      - bitmix-dev-network 
+
+  nginx:
+    container_name: "nginx"
+    build:
+      context: .
+      dockerfile: ./packages/nginx/Dockerfile.dev
+    ports:
+      - 8080:80 
+    volumes:
+      - ./packages/nginx:/app/packages/nginx
+    networks:
+      - bitmix-dev-network
+    depends_on:
+      - cms
+      - api 
+
+networks:
+  bitmix-dev-network:
+    driver: bridge

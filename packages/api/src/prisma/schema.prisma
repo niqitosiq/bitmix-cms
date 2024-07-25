@@ -1,0 +1,79 @@
+// This is the Prisma schema file
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./backend/db.sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Site {
+  id          Int        @id @default(autoincrement())
+  name        String
+  Component   Component? @relation(fields: [componentId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  componentId Int?
+}
+
+model Page {
+  id          Int        @id @default(autoincrement())
+  url         String
+  componentId Int
+  Component   Component? @relation(fields: [componentId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  schemaId    Int
+  Schema      Schema?    @relation(fields: [schemaId], references: [id])
+}
+
+model Category {
+  id        Int         @id @default(autoincrement())
+  name      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  component Component[]
+}
+
+model Prop {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Schema    Schema?  @relation(fields: [schemaId], references: [id])
+  schemaId  Int?
+}
+
+model Schema {
+  id              Int        @id @default(autoincrement())
+  name            String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  props           Prop[]
+  componentId     Int
+  Component       Component? @relation("Component", fields: [componentId], references: [id])
+  ParentComponent Component  @relation("Children", fields: [componentId], references: [id])
+  Page            Page[]
+}
+
+model Component {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String?
+  icon          String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  type          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  categoryId    Int?
+  isBase        Boolean   @default(false)
+  code          String?
+  ParentSchemas Schema[]  @relation("Component")
+  Schemas       Schema[]  @relation("Children")
+  Site          Site[]
+  Page          Page[]
+}

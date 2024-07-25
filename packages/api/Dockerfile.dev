@@ -1,0 +1,17 @@
+# Stage 1: Base image
+FROM node:20 AS base
+WORKDIR /app
+
+# Stage 2: Dependencies
+FROM base AS dependencies
+COPY package*.json ./
+COPY ./packages/api/package*.json /app/packages/api/
+RUN npm install
+
+# Stage 3: Development
+FROM dependencies AS development
+WORKDIR /app/packages/api
+ENV NODE_ENV=development
+COPY . /app/packages/api
+EXPOSE 5000
+CMD ["npm", "run", "dev"]
