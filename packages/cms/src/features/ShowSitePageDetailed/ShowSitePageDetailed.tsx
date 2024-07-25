@@ -24,7 +24,7 @@ export const ShowSitePageDetailed = ({ siteId, children }: Props) => {
                             url={page.url}
                             key={page.id}
                         >
-                            <Link to={`/pages/${page.url}/edit`}>
+                            <Link to={`/pages/${page.id}/edit`}>
                                 <Button>Edit</Button>
                             </Link>
                         </PageInline>

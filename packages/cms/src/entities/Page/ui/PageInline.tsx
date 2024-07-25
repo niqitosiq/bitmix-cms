@@ -8,7 +8,7 @@ type Props = {
     id: Page['id']
     name: Page['name']
     url: Page['url']
-    children: React.ReactNode
+    children?: React.ReactNode
 }
 
 export const PageInline = ({ id, name, url, children }: Props) => {

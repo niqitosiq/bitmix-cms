@@ -14,8 +14,6 @@ const useCreatePage = () => {
         mutationKey: ['page'],
         mutationFn: createPage,
         onSuccess: (body) => {
-            console.log(body)
-
             queryClient.invalidateQueries({
                 queryKey: ['site', { siteId: body.siteId }],
             })

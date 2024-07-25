@@ -7,8 +7,9 @@ const getPages = (): Promise<Page[]> => {
     return api.get(`/pages`)
 }
 
-const getPage = (pageId: string): Promise<Page & { Schema: Schema }> => {
-    return api.get(`/pages/${pageId}`)
+const getPage = async (pageId: string): Promise<Page & { Schema: Schema }> => {
+    const data = await api.get(`/pages/${pageId}`)
+    return data.data
 }
 
 export type Body = {
