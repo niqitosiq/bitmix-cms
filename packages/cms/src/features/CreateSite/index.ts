@@ -1,3 +1,1 @@
-export const CreateSite = () => {
-    return
-}
+export { CreateSite } from './CreateSite'

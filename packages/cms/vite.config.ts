@@ -2,7 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
-import { TanStackRouterVite } from '@tanstack/router-plugin/src/vite'
+import { fileURLToPath, URL } from 'url'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,14 +19,20 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@src': './src',
-            '@shared': './src/shared',
-            '@features': './src/features',
-            '@widgets': './src/widgets',
-            '@entities': './src/entities',
-            '@pages': './src/pages',
-            '@packages': '../',
-            '@app': '../api',
+            '@src': fileURLToPath(new URL('./src', import.meta.url)),
+            '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
+            '@features': fileURLToPath(
+                new URL('./src/features', import.meta.url)
+            ),
+            '@widgets': fileURLToPath(
+                new URL('./src/widgets', import.meta.url)
+            ),
+            '@entities': fileURLToPath(
+                new URL('./src/entities', import.meta.url)
+            ),
+            '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
+            '@packages': fileURLToPath(new URL('../', import.meta.url)),
+            '@app': fileURLToPath(new URL('../api', import.meta.url)),
         },
     },
 })

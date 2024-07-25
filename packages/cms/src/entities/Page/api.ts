@@ -1,6 +1,7 @@
 import { api } from '@shared/api'
 import { Page } from './types'
 import { Schema } from '@entities/Schema'
+import { Site } from '@entities/Site'
 
 const getPages = (): Promise<Page[]> => {
     return api.get(`/pages`)
@@ -14,13 +15,21 @@ export type Body = {
     name: string
     url: string
     pageFrameName?: string
+    siteId: Site['id']
 }
-const createPage = ({
+const createPage = async ({
     name,
     url,
     pageFrameName = 'PageFrame',
+    siteId,
 }: Body): Promise<Page & { Schema: Schema }> => {
-    return api.post(`/pages`, { name, url, pageFrameName })
+    const response = await api.post(`/pages`, {
+        name,
+        url,
+        pageFrameName,
+        siteId,
+    })
+    return response.data
 }
 
 export { getPages, getPage, createPage }

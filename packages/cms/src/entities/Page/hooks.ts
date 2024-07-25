@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Body, createPage, getPage } from './api'
-import { Page } from './types'
+import { createPage, getPage } from './api'
 
 const useGetPage = (id: string) => {
     return useQuery({
@@ -9,14 +8,16 @@ const useGetPage = (id: string) => {
     })
 }
 
-const useCreatePage = (body: Body) => {
+const useCreatePage = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationKey: ['page'],
-        mutationFn: () => createPage(body),
-        onSuccess: () => {
-            queryClient.setQueryData(['pages'], (data: Page[]) => {
-                return [...data, body]
+        mutationFn: createPage,
+        onSuccess: (body) => {
+            console.log(body)
+
+            queryClient.invalidateQueries({
+                queryKey: ['site', { siteId: body.siteId }],
             })
         },
     })

@@ -1,8 +1,9 @@
+import { SiteList } from '@widgets/SiteList'
+
 export const Page = () => {
     return (
         <div>
-            privet!
-            <div>prikol</div>
+            <SiteList />
         </div>
     )
 }

@@ -98,4 +98,22 @@ export class SiteController {
             res.status(500).json({ message: 'Internal server error' })
         }
     }
+
+    async getSitePages(req: Request, res: Response) {
+        try {
+            const { id } = req.params
+            const site = await prisma.site.findUnique({
+                where: { id: Number(id) },
+                include: { Pages: true },
+            })
+            if (site) {
+                res.json(site)
+            } else {
+                res.status(404).json({ message: 'Site not found' })
+            }
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
 }

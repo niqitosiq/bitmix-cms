@@ -6,7 +6,8 @@
     "scripts": {
         "start": "node -r dotenv/config src/app.js",
         "dev": "nodemon -r dotenv/config src/app.ts",
-        "generate": "npx prisma generate --schema ./src/prisma/schema.prisma"
+        "generate": "npx prisma generate --schema ./src/prisma/schema.prisma",
+        "migrate": "npx prisma migrate dev --schema ./src/prisma/schema.prisma"
     },
     "keywords": [
         "express",

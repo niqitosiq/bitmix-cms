@@ -36,14 +36,21 @@ export class PageController {
         const {
             url,
             name,
+            siteId,
             pageFrameName = 'PageFrame',
-        } = req.body as { url: string; name: string; pageFrameName: string }
+        } = req.body as {
+            url: string
+            name: string
+            pageFrameName: string
+            siteId: number
+        }
 
         try {
             const page = await prisma.page.create({
                 data: {
                     url,
                     name,
+                    Site: { connect: { id: siteId } },
                     Schema: {
                         create: {
                             Frame: {

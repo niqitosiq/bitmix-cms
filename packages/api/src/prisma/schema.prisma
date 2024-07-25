@@ -12,10 +12,9 @@ generator client {
 model Site {
   id        Int      @id @default(autoincrement())
   name      String
-  Frame     Frame?   @relation(fields: [frameId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  frameId   Int?
+  Pages     Page[]
 }
 
 model Page {
@@ -26,6 +25,8 @@ model Page {
   updatedAt DateTime @updatedAt
   schemaId  Int
   Schema    Schema?  @relation(fields: [schemaId], references: [id])
+  Site      Site?    @relation(fields: [siteId], references: [id])
+  siteId    Int?
 }
 
 model Category {
@@ -85,5 +86,4 @@ model Frame {
   code          String?
   ParentSchemas Schema[]  @relation("Frame")
   Schemas       Schema[]  @relation("Children")
-  Site          Site[]
 }
