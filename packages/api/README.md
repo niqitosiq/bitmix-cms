@@ -13,13 +13,13 @@ backend
 │   │   ├── pageController.ts
 │   │   ├── categoryController.ts
 │   │   ├── schemaController.ts
-│   │   └── componentController.ts
+│   │   └── frameController.ts
 │   ├── models
 │   │   ├── site.ts
 │   │   ├── page.ts
 │   │   ├── category.ts
 │   │   ├── schema.ts
-│   │   └── component.ts
+│   │   └── frame.ts
 │   ├── prisma
 │   │   └── schema.prisma
 │   └── routes
@@ -27,7 +27,7 @@ backend
 │       ├── pageRoutes.ts
 │       ├── categoryRoutes.ts
 │       ├── schemaRoutes.ts
-│       └── componentRoutes.ts
+│       └── frameRoutes.ts
 ├── .env
 ├── package.json
 ├── tsconfig.json
@@ -46,7 +46,7 @@ backend
 
 - `src/controllers/schemaController.ts`: This file exports a class `SchemaController` which contains methods for handling CRUD operations related to the `Schema` entity.
 
-- `src/controllers/componentController.ts`: This file exports a class `ComponentController` which contains methods for handling CRUD operations related to the `Component` entity.
+- `src/controllers/frameController.ts`: This file exports a class `FrameController` which contains methods for handling CRUD operations related to the `Frame` entity.
 
 - `src/models/site.ts`: This file exports a TypeScript interface `Site` which represents the fields of the `Site` entity.
 
@@ -56,7 +56,7 @@ backend
 
 - `src/models/schema.ts`: This file exports a TypeScript interface `Schema` which represents the fields of the `Schema` entity.
 
-- `src/models/component.ts`: This file exports a TypeScript interface `Component` which represents the fields of the `Component` entity.
+- `src/models/frame.ts`: This file exports a TypeScript interface `Frame` which represents the fields of the `Frame` entity.
 
 - `src/prisma/schema.prisma`: This file is the Prisma schema file which defines the database schema and models for the SQLite database.
 
@@ -68,7 +68,7 @@ backend
 
 - `src/routes/schemaRoutes.ts`: This file exports a function `setSchemaRoutes` which sets up the routes for the `Schema` entity. It uses the `SchemaController` to handle the CRUD operations.
 
-- `src/routes/componentRoutes.ts`: This file exports a function `setComponentRoutes` which sets up the routes for the `Component` entity. It uses the `ComponentController` to handle the CRUD operations.
+- `src/routes/frameRoutes.ts`: This file exports a function `setFrameRoutes` which sets up the routes for the `Frame` entity. It uses the `FrameController` to handle the CRUD operations.
 
 - `.env`: This file is used to store environment variables. It may contain the configuration for the SQLite database connection.
 

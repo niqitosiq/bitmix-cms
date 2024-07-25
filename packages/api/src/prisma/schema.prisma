@@ -10,31 +10,31 @@ generator client {
 }
 
 model Site {
-  id          Int        @id @default(autoincrement())
-  name        String
-  Component   Component? @relation(fields: [componentId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  componentId Int?
+  id        Int      @id @default(autoincrement())
+  name      String
+  Frame     Frame?   @relation(fields: [frameId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  frameId   Int?
 }
 
 model Page {
-  id          Int        @id @default(autoincrement())
-  url         String
-  componentId Int
-  Component   Component? @relation(fields: [componentId], references: [id])
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  schemaId    Int
-  Schema      Schema?    @relation(fields: [schemaId], references: [id])
+  id        Int      @id @default(autoincrement())
+  url       String
+  frameId   Int
+  Frame     Frame?   @relation(fields: [frameId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  schemaId  Int
+  Schema    Schema?  @relation(fields: [schemaId], references: [id])
 }
 
 model Category {
-  id        Int         @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  component Component[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  frame     Frame[]
 }
 
 model Prop {
@@ -49,18 +49,18 @@ model Prop {
 }
 
 model Schema {
-  id              Int        @id @default(autoincrement())
-  name            String?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  props           Prop[]
-  componentId     Int
-  Component       Component? @relation("Component", fields: [componentId], references: [id])
-  ParentComponent Component  @relation("Children", fields: [componentId], references: [id])
-  Page            Page[]
+  id          Int      @id @default(autoincrement())
+  name        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  props       Prop[]
+  frameId     Int
+  Frame       Frame?   @relation("Frame", fields: [frameId], references: [id])
+  ParentFrame Frame    @relation("Children", fields: [frameId], references: [id])
+  Page        Page[]
 }
 
-model Component {
+model Frame {
   id            Int       @id @default(autoincrement())
   name          String
   description   String?
@@ -72,7 +72,7 @@ model Component {
   categoryId    Int?
   isBase        Boolean   @default(false)
   code          String?
-  ParentSchemas Schema[]  @relation("Component")
+  ParentSchemas Schema[]  @relation("Frame")
   Schemas       Schema[]  @relation("Children")
   Site          Site[]
   Page          Page[]

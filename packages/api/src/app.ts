@@ -15,13 +15,13 @@ import { siteRoutes } from './routes/siteRoutes'
 import { pageRouter } from './routes/pageRoutes'
 import { categoryRouter } from './routes/categoryRoutes'
 import { schemaRouter } from './routes/schemaRoutes'
-import { componentRouter } from './routes/componentRoutes'
+import { frameRouter } from './routes/frameRoutes'
 
 app.use(siteRoutes)
 app.use(pageRouter)
 app.use(categoryRouter)
 app.use(schemaRouter)
-app.use(componentRouter)
+app.use(frameRouter)
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000')
