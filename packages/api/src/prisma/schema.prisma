@@ -21,8 +21,7 @@ model Site {
 model Page {
   id        Int      @id @default(autoincrement())
   url       String
-  frameId   Int
-  Frame     Frame?   @relation(fields: [frameId], references: [id])
+  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   schemaId  Int
@@ -37,32 +36,44 @@ model Category {
   frame     Frame[]
 }
 
+model PropValue {
+  id                   Int      @id @default(autoincrement())
+  value                String?
+  schemaReferenceId    Int?
+  schemaReferenceField String?
+  Schema               Schema?  @relation(fields: [schemaReferenceId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  propId               Int?
+  Prop                 Prop?
+}
+
 model Prop {
-  id        Int      @id @default(autoincrement())
-  name      String
-  type      String
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Schema    Schema?  @relation(fields: [schemaId], references: [id])
-  schemaId  Int?
+  id          Int        @id @default(autoincrement())
+  name        String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Schema      Schema?    @relation(fields: [schemaId], references: [id])
+  schemaId    Int?
+  propValue   PropValue? @relation(fields: [propValueId], references: [id])
+  propValueId Int?       @unique
 }
 
 model Schema {
-  id          Int      @id @default(autoincrement())
-  name        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  props       Prop[]
-  frameId     Int
-  Frame       Frame?   @relation("Frame", fields: [frameId], references: [id])
-  ParentFrame Frame    @relation("Children", fields: [frameId], references: [id])
-  Page        Page[]
+  id                   Int         @id @default(autoincrement())
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  props                Prop[]
+  frameId              Int
+  Frame                Frame?      @relation("Frame", fields: [frameId], references: [id])
+  ParentFrame          Frame?      @relation("Children", fields: [frameId], references: [id])
+  Page                 Page[]
+  ReferenceToPropValue PropValue[]
 }
 
 model Frame {
   id            Int       @id @default(autoincrement())
-  name          String
+  name          String    @unique
   description   String?
   icon          String?
   category      Category? @relation(fields: [categoryId], references: [id])
@@ -75,5 +86,4 @@ model Frame {
   ParentSchemas Schema[]  @relation("Frame")
   Schemas       Schema[]  @relation("Children")
   Site          Site[]
-  Page          Page[]
 }

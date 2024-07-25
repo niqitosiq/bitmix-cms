@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { TanStackRouterVite } from '@tanstack/router-plugin/src/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,12 +18,14 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            src: './src',
-            shared: './src/shared',
-            features: './src/features',
-            widgets: './src/widgets',
-            entities: './src/entities',
-            pages: './src/pages',
+            '@src': './src',
+            '@shared': './src/shared',
+            '@features': './src/features',
+            '@widgets': './src/widgets',
+            '@entities': './src/entities',
+            '@pages': './src/pages',
+            '@packages': '../',
+            '@app': '../api',
         },
     },
 })

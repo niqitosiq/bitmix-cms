@@ -1,20 +1,36 @@
 import { Request, Response } from 'express'
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prop, PropValue, Schema } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+export type SchemaCreationBody = {
+    frameId: number
+    name: string
+    pageId: number
+}
+export type UpdatePropsToSchemaBody = {
+    id?: number
+    name: string
+    type: string
+    mockValue?: string
+    reference?: {
+        schemaId: number
+        fieldName: string
+    }
+}
+
 export class SchemaController {
-    async createSchema(req: Request, res: Response) {
+    async createSchema(
+        req: Request<unknown, Schema, SchemaCreationBody>,
+        res: Response
+    ) {
         try {
-            const { frameId, name } = req.body as {
-                frameId: number
-                name: string
-            }
+            const { frameId, name, pageId } = req.body
 
             const schema = await prisma.schema.create({
                 data: {
                     ParentFrame: { connect: { id: frameId } },
-                    name,
+                    Page: { connect: { id: pageId } },
                 },
             })
 
@@ -86,42 +102,32 @@ export class SchemaController {
     async updatePropToSchema(req: Request, res: Response) {
         try {
             const { schemaId } = req.params as unknown as { schemaId: string }
-            const { id, name, type, value } = req.body as {
-                id?: number
-                name: string
-                type: string
-                value: string
-            }
+            const { name, mockValue, reference } =
+                req.body as UpdatePropsToSchemaBody
 
-            console.log('schemaId', schemaId)
+            const isSchemaHasPropWithSameName = await prisma.prop.findFirst({
+                where: {
+                    schemaId: Number(schemaId),
+                    name,
+                },
+            })
 
-            // if exists then update
-            if (id) {
-                const existingProp = await prisma.prop.findFirst({
-                    where: {
-                        id: Number(id),
-                    },
+            if (isSchemaHasPropWithSameName) {
+                await prisma.prop.delete({
+                    where: { id: isSchemaHasPropWithSameName.id },
                 })
-
-                if (existingProp) {
-                    const prop = await prisma.prop.update({
-                        where: { id: existingProp.id },
-                        data: {
-                            name,
-                            type,
-                            value,
-                        },
-                    })
-
-                    return res.status(200).json(prop)
-                }
             }
+
             const prop = await prisma.prop.create({
                 data: {
-                    Schema: { connect: { id: parseInt(schemaId) } },
                     name,
-                    type,
-                    value,
+                    propValue: {
+                        create: {
+                            schemaReferenceId: reference?.schemaId,
+                            schemaReferenceField: reference?.fieldName,
+                            value: mockValue,
+                        },
+                    },
                 },
             })
 
@@ -139,6 +145,25 @@ export class SchemaController {
             await prisma.prop.delete({ where: { id: Number(propId) } })
 
             res.status(204).end()
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async getPropById(req: Request, res: Response) {
+        try {
+            const { propId } = req.params as unknown as { propId: string }
+
+            const prop = await prisma.prop.findUnique({
+                where: { id: Number(propId) },
+            })
+
+            if (prop) {
+                res.json(prop)
+            } else {
+                res.status(404).json({ message: 'Prop not found' })
+            }
         } catch (error) {
             console.error(error)
             res.status(500).json({ message: 'Internal server error' })

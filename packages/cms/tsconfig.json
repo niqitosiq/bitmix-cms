@@ -3,22 +3,15 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "baseUrl": "./",
+        "jsx": "react-jsx",
         "paths": {
-            "src/*": ["./src/*"],
-            "shared/*": ["./src/shared/*"],
-            "features/*": ["./src/features/*"],
-            "widgets/*": ["./src/widgets/*"],
-            "entities/*": ["./src/entities/*"],
-            "pages/*": ["./src/pages/*"]
+            "@shared/*": ["./src/shared/*"],
+            "@features/*": ["./src/features/*"],
+            "@widgets/*": ["./src/widgets/*"],
+            "@entities/*": ["./src/entities/*"],
+            "@pages/*": ["./src/pages/*"],
+            "@packages/*": ["./src/packages/*"],
+            "@api/*": ["../api/*"]
         }
-    },
-    "files": [],
-    "references": [
-        {
-            "path": "./tsconfig.app.json"
-        },
-        {
-            "path": "./tsconfig.node.json"
-        }
-    ]
+    }
 }

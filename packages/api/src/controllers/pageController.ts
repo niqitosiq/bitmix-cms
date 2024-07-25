@@ -19,6 +19,7 @@ export class PageController {
         try {
             const page = await prisma.page.findUnique({
                 where: { id: Number(id) },
+                include: { Schema: true },
             })
             if (page) {
                 res.json(page)
@@ -32,13 +33,26 @@ export class PageController {
     }
 
     async createPage(req: Request, res: Response) {
-        const { url, schemaId } = req.body
+        const {
+            url,
+            name,
+            pageFrameName = 'PageFrame',
+        } = req.body as { url: string; name: string; pageFrameName: string }
+
         try {
             const page = await prisma.page.create({
                 data: {
                     url,
-                    Schema: { connect: { id: schemaId } },
+                    name,
+                    Schema: {
+                        create: {
+                            Frame: {
+                                connect: { name: pageFrameName },
+                            },
+                        },
+                    },
                 },
+                include: { Schema: true },
             })
             res.json(page)
         } catch (error) {
@@ -70,6 +84,24 @@ export class PageController {
         try {
             await prisma.page.delete({ where: { id: Number(id) } })
             res.json({ message: 'Page deleted successfully' })
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ error: 'Internal server error' })
+        }
+    }
+
+    async getPageSchema(req: Request, res: Response) {
+        const { id } = req.params
+        try {
+            const page = await prisma.page.findUnique({
+                where: { id: Number(id) },
+                include: { Schema: true },
+            })
+            if (page) {
+                res.json(page.Schema)
+            } else {
+                res.status(404).json({ error: 'Page not found' })
+            }
         } catch (error) {
             console.error(error)
             res.status(500).json({ error: 'Internal server error' })
