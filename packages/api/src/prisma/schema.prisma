@@ -66,10 +66,12 @@ model Schema {
   updatedAt            DateTime    @updatedAt
   props                Prop[]
   frameId              Int
-  Frame                Frame?      @relation("Frame", fields: [frameId], references: [id])
-  ParentFrame          Frame?      @relation("Children", fields: [frameId], references: [id])
   Page                 Page[]
   ReferenceToPropValue PropValue[]
+  Frame                Frame?      @relation("Frame", fields: [frameId], references: [id])
+  ParentSchema         Schema?     @relation("ChildrenSchema", fields: [id], references: [parentSchemaId])
+  parentSchemaId       Int?        @unique
+  ChildrenSchema       Schema[]    @relation("ChildrenSchema")
 }
 
 model Frame {
@@ -85,5 +87,4 @@ model Frame {
   isBase        Boolean   @default(false)
   code          String?
   ParentSchemas Schema[]  @relation("Frame")
-  Schemas       Schema[]  @relation("Children")
 }

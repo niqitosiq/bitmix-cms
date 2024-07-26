@@ -4,7 +4,7 @@ import { PrismaClient, Prop, PropValue, Schema } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export type SchemaCreationBody = {
-    frameId: number
+    parentSchemaId: number
     name: string
     pageId: number
 }
@@ -25,11 +25,11 @@ export class SchemaController {
         res: Response
     ) {
         try {
-            const { frameId, name, pageId } = req.body
+            const { parentSchemaId, pageId } = req.body
 
             const schema = await prisma.schema.create({
                 data: {
-                    ParentFrame: { connect: { id: frameId } },
+                    ParentSchema: { connect: { id: parentSchemaId } },
                     Page: { connect: { id: pageId } },
                 },
             })
@@ -59,9 +59,10 @@ export class SchemaController {
             const schemas = await prisma.schema.findMany({
                 include: {
                     props: true,
-                    Frame: {
+                    Frame: true,
+                    ChildrenSchema: {
                         include: {
-                            Schemas: true,
+                            ChildrenSchema: true,
                         },
                     },
                 },
@@ -81,9 +82,10 @@ export class SchemaController {
                 where: { id: Number(id) },
                 include: {
                     props: true,
-                    Frame: {
+                    Frame: true,
+                    ChildrenSchema: {
                         include: {
-                            Schemas: true,
+                            ChildrenSchema: true,
                         },
                     },
                 },

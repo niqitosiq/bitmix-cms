@@ -3,12 +3,13 @@ import { getSchema } from './api'
 import { Schema } from './types'
 import { Page } from '@entities/Page'
 
-const useGetSchema = (schemaId: Schema['id']) => {
+const useGetSchema = (schemaId?: Schema['id']) => {
     const queryClient = useQueryClient()
 
     return useQuery({
         queryKey: ['schema'],
-        queryFn: () => getSchema(schemaId),
+        enabled: !!schemaId,
+        queryFn: () => getSchema(schemaId!),
         initialData: () => {
             const pages = queryClient.getQueryData(['page'])
             if (!pages) return

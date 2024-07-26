@@ -86,20 +86,20 @@ export class FrameController {
     }
 
     async createSchemaForFrame(req: Request, res: Response) {
-        const { frameId } = req.params
-        try {
-            const schema = await prisma.frame.update({
-                where: { id: parseInt(frameId) },
-                data: {
-                    Schemas: {
-                        create: [],
-                    },
-                },
-            })
-            res.json(schema)
-        } catch (error) {
-            console.error(error)
-            res.status(500).json({ error: 'Internal server error' })
-        }
+        // const { frameId } = req.params
+        // try {
+        //     const schema = await prisma.frame.update({
+        //         where: { id: parseInt(frameId) },
+        //         data: {
+        //             Schemas: {
+        //                 create: [],
+        //             },
+        //         },
+        //     })
+        //     res.json(schema)
+        // } catch (error) {
+        //     console.error(error)
+        //     res.status(500).json({ error: 'Internal server error' })
+        // }
     }
 }
