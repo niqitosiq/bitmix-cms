@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { Request, Response } from 'express'
+import { getUniqueWordId } from './schemaController'
 
 const prisma = new PrismaClient()
 
@@ -18,7 +19,7 @@ export class PageController {
         const { id } = req.params
         try {
             const page = await prisma.page.findUnique({
-                where: { id: Number(id) },
+                where: { id },
                 include: { Schema: true },
             })
             if (page) {
@@ -42,7 +43,7 @@ export class PageController {
             url: string
             name: string
             pageFrameName: string
-            siteId: number
+            siteId: string
         }
 
         try {
@@ -53,6 +54,7 @@ export class PageController {
                     Site: { connect: { id: siteId } },
                     Schema: {
                         create: {
+                            alias: 'page' + getUniqueWordId(),
                             Frame: {
                                 connect: { name: pageFrameName },
                             },
@@ -73,7 +75,7 @@ export class PageController {
         const { url, schemaId } = req.body
         try {
             const page = await prisma.page.update({
-                where: { id: Number(id) },
+                where: { id },
                 data: {
                     url,
                     Schema: { connect: { id: schemaId } },
@@ -89,7 +91,7 @@ export class PageController {
     async deletePage(req: Request, res: Response) {
         const { id } = req.params
         try {
-            await prisma.page.delete({ where: { id: Number(id) } })
+            await prisma.page.delete({ where: { id } })
             res.json({ message: 'Page deleted successfully' })
         } catch (error) {
             console.error(error)
@@ -101,7 +103,7 @@ export class PageController {
         const { id } = req.params
         try {
             const page = await prisma.page.findUnique({
-                where: { id: Number(id) },
+                where: { id },
                 include: { Schema: true },
             })
             if (page) {

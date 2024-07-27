@@ -1,0 +1,23 @@
+import { Schema, CleanSchema } from './types'
+
+export const getCleanSchema = (schema: Schema): CleanSchema => {
+    return {
+        id: schema['id'],
+        schema: schema['frameId'],
+        parentSchemaId: schema['parentSchemaId'],
+        updatedAt: schema['updatedAt'],
+        Frame: schema['Frame'],
+    }
+}
+
+export const iterateOverChildrenSchemas = (
+    schema: Schema,
+    handler: (schema: Schema, parentSchema: Schema) => void
+) => {
+    if (schema.ChildrenSchema && schema.ChildrenSchema.length) {
+        schema.ChildrenSchema.forEach((childSchema) => {
+            handler(childSchema, schema)
+            iterateOverChildrenSchemas(childSchema, handler)
+        })
+    }
+}

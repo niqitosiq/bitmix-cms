@@ -24,7 +24,7 @@ export class SiteController {
             const { id } = req.params
             const site = await prisma.site.findUnique({
                 where: {
-                    id: parseInt(id),
+                    id: id,
                 },
             })
             if (!site) {
@@ -44,7 +44,7 @@ export class SiteController {
             const { name } = req.body
             const site = await prisma.site.update({
                 where: {
-                    id: parseInt(id),
+                    id: id,
                 },
                 data: {
                     name,
@@ -62,7 +62,7 @@ export class SiteController {
             const { id } = req.params
             await prisma.site.delete({
                 where: {
-                    id: parseInt(id),
+                    id: id,
                 },
             })
             res.sendStatus(204)
@@ -86,7 +86,7 @@ export class SiteController {
         try {
             const { id } = req.params
             const site = await prisma.site.findUnique({
-                where: { id: Number(id) },
+                where: { id },
             })
             if (site) {
                 res.json(site)
@@ -103,7 +103,7 @@ export class SiteController {
         try {
             const { id } = req.params
             const site = await prisma.site.findUnique({
-                where: { id: Number(id) },
+                where: { id },
                 include: { Pages: true },
             })
             if (site) {

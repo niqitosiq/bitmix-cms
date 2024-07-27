@@ -18,7 +18,7 @@ export class FrameController {
         const { id } = req.params
         try {
             const frame = await prisma.frame.findUnique({
-                where: { id: parseInt(id) },
+                where: { id },
             })
             if (frame) {
                 res.json(frame)
@@ -56,7 +56,7 @@ export class FrameController {
         const { name, description, icon, category, type } = req.body
         try {
             const updatedFrame = await prisma.frame.update({
-                where: { id: parseInt(id) },
+                where: { id },
                 data: {
                     name,
                     description,
@@ -76,7 +76,7 @@ export class FrameController {
         const { id } = req.params
         try {
             await prisma.frame.delete({
-                where: { id: parseInt(id) },
+                where: { id },
             })
             res.json({ message: 'Frame deleted successfully' })
         } catch (error) {

@@ -4,11 +4,16 @@ import { PropIn } from '@entities/Prop/ui/PropIn'
 import { Schema, SchemaNodeType } from '@entities/Schema'
 import { useGetSchema } from '@entities/Schema/hooks'
 import { SchemaTreeFlow } from '@entities/Schema/ui/SchemaTreeFlow'
+import { transpile } from '@entities/TranspiledCode'
+import { convertSchemaToTranspileReady } from '@entities/TranspiledCode/utils'
 import { AddSchemaChildren } from '@features/AddSchemaChildren'
 import { ConnectSchemaNodes } from '@features/ConnectSchemaNodes'
 import { DeleteSchema } from '@features/DeleteSchema/DeleteSchema'
+import { TranspileSchema } from '@features/TranspileSchema'
+import { UpdateTSExecutable } from '@features/UpdateTSExecutable/UpdateTSExecutable'
 import { Loading } from '@shared/ui/Loading'
 import { NodeCard } from '@shared/ui/NodeCard'
+import { TypescriptProvider } from '@shared/ui/TypescriptContext/Typescript'
 import { NodeProps, ReactFlow } from '@xyflow/react'
 
 import '@xyflow/react/dist/style.css'
@@ -64,22 +69,35 @@ export const ConfigureSchema = ({ id }: Props) => {
     }
 
     return (
-        <SchemaTreeFlow schema={data!}>
-            {({ nodes, edges }) => (
-                <ConnectSchemaNodes nodes={nodes} edges={edges}>
-                    {({ onConnect }) => (
-                        <div style={{ height: '100vh', width: '100vw' }}>
-                            <ReactFlow
-                                nodes={nodes}
-                                edges={edges}
-                                onConnect={onConnect}
-                                nodeTypes={nodeTypes}
-                                fitView
-                            />
-                        </div>
-                    )}
-                </ConnectSchemaNodes>
-            )}
-        </SchemaTreeFlow>
+        <TypescriptProvider>
+            <TranspileSchema schema={data!}>
+                {({ transpiled }) => (
+                    <UpdateTSExecutable code={transpiled?.code}>
+                        <SchemaTreeFlow schema={data!}>
+                            {({ nodes, edges }) => (
+                                <ConnectSchemaNodes nodes={nodes} edges={edges}>
+                                    {({ onConnect }) => (
+                                        <div
+                                            style={{
+                                                height: '100vh',
+                                                width: '100vw',
+                                            }}
+                                        >
+                                            <ReactFlow
+                                                nodes={nodes}
+                                                edges={edges}
+                                                onConnect={onConnect}
+                                                nodeTypes={nodeTypes}
+                                                fitView
+                                            />
+                                        </div>
+                                    )}
+                                </ConnectSchemaNodes>
+                            )}
+                        </SchemaTreeFlow>
+                    </UpdateTSExecutable>
+                )}
+            </TranspileSchema>
+        </TypescriptProvider>
     )
 }

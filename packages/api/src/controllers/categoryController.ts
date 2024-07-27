@@ -18,7 +18,7 @@ export class CategoryController {
         const { id } = req.params
         try {
             const category = await prisma.category.findUnique({
-                where: { id: parseInt(id) },
+                where: { id },
             })
             if (category) {
                 res.json(category)
@@ -49,7 +49,7 @@ export class CategoryController {
         const { name } = req.body
         try {
             const category = await prisma.category.update({
-                where: { id: parseInt(id) },
+                where: { id },
                 data: { name },
             })
             res.json(category)
@@ -63,7 +63,7 @@ export class CategoryController {
         const { id } = req.params
         try {
             await prisma.category.delete({
-                where: { id: parseInt(id) },
+                where: { id },
             })
             res.json({ message: 'Category deleted successfully' })
         } catch (error) {

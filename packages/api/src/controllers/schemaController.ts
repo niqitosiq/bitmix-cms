@@ -1,22 +1,28 @@
 import { Request, Response } from 'express'
 import { PrismaClient, Prop, PropValue, Schema } from '@prisma/client'
+import { generate } from 'random-words'
+import { v4 as uuidv4 } from 'uuid'
 
 const prisma = new PrismaClient()
 
 export type SchemaCreationBody = {
-    parentSchemaId?: number
-    pageId?: number
-    frameId: number
+    parentSchemaId?: string
+    pageId?: string
+    frameId: string
 }
 export type UpdatePropsToSchemaBody = {
-    id?: number
+    id?: string
     name: string
     type: string
     mockValue?: string
     reference?: {
-        schemaId: number
+        schemaId: string
         fieldName: string
     }
+}
+
+export const getUniqueWordId = (): string => {
+    return generate() + uuidv4().slice(0, 4)
 }
 
 export class SchemaController {
@@ -29,6 +35,7 @@ export class SchemaController {
 
             const schema = await prisma.schema.create({
                 data: {
+                    alias: getUniqueWordId(),
                     ParentSchema: parentSchemaId
                         ? { connect: { id: parentSchemaId } }
                         : undefined,
@@ -46,9 +53,9 @@ export class SchemaController {
 
     async deleteSchema(req: Request, res: Response) {
         try {
-            const { id } = req.params as unknown as { id: number }
+            const { id } = req.params as unknown as { id: string }
 
-            await prisma.schema.delete({ where: { id: Number(id) } })
+            await prisma.schema.delete({ where: { id } })
 
             res.status(204).end()
         } catch (error) {
@@ -83,7 +90,7 @@ export class SchemaController {
         try {
             const { id } = req.params
             const topLevelSchema = await prisma.schema.findUnique({
-                where: { id: Number(id) },
+                where: { id },
                 include: {
                     props: true,
                     Frame: true,
@@ -132,7 +139,7 @@ export class SchemaController {
 
             const isSchemaHasPropWithSameName = await prisma.prop.findFirst({
                 where: {
-                    schemaId: Number(schemaId),
+                    schemaId: schemaId,
                     name,
                 },
             })
@@ -167,7 +174,7 @@ export class SchemaController {
         try {
             const { propId } = req.params as unknown as { propId: string }
 
-            await prisma.prop.delete({ where: { id: Number(propId) } })
+            await prisma.prop.delete({ where: { id: propId } })
 
             res.status(204).end()
         } catch (error) {
@@ -181,7 +188,7 @@ export class SchemaController {
             const { propId } = req.params as unknown as { propId: string }
 
             const prop = await prisma.prop.findUnique({
-                where: { id: Number(propId) },
+                where: { id: propId },
             })
 
             if (prop) {

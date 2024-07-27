@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
-import { CleanSchema, Schema, SchemaNodeType } from '../types'
+import { useEffect } from 'react'
+import { Schema, SchemaNodeType } from '../types'
 import dagre from '@dagrejs/dagre'
 import { Edge, useEdgesState, useNodesState } from '@xyflow/react'
+import { getCleanSchema, iterateOverChildrenSchemas } from '../utils'
 
 type Props = {
     schema: Schema
@@ -10,28 +11,6 @@ type Props = {
         edges: Edge[]
         onUpdate: () => void
     }) => JSX.Element
-}
-
-const getCleanSchema = (schema: Schema): CleanSchema => {
-    return {
-        id: schema['id'],
-        schema: schema['frameId'],
-        parentSchemaId: schema['parentSchemaId'],
-        updatedAt: schema['updatedAt'],
-        Frame: schema['Frame'],
-    }
-}
-
-const iterateOverChildrenSchemas = (
-    schema: Schema,
-    handler: (schema: Schema, parentSchema: Schema) => void
-) => {
-    if (schema.ChildrenSchema && schema.ChildrenSchema.length) {
-        schema.ChildrenSchema.forEach((childSchema) => {
-            handler(childSchema, schema)
-            iterateOverChildrenSchemas(childSchema, handler)
-        })
-    }
 }
 
 const nodeWidth = 200

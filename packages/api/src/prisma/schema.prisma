@@ -10,7 +10,7 @@ generator client {
 }
 
 model Site {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -18,19 +18,19 @@ model Site {
 }
 
 model Page {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   url       String
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  schemaId  Int
+  schemaId  String
   Schema    Schema?  @relation(fields: [schemaId], references: [id])
   Site      Site?    @relation(fields: [siteId], references: [id])
-  siteId    Int?
+  siteId    String?
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -38,44 +38,45 @@ model Category {
 }
 
 model PropValue {
-  id                   Int      @id @default(autoincrement())
+  id                   String   @id @default(uuid())
   value                String?
-  schemaReferenceId    Int?
+  schemaReferenceAlias String?
   schemaReferenceField String?
-  Schema               Schema?  @relation(fields: [schemaReferenceId], references: [id])
+  Schema               Schema?  @relation(fields: [schemaReferenceAlias], references: [alias])
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-  propId               Int?
+  propId               String?
   Prop                 Prop?
 }
 
 model Prop {
-  id          Int        @id @default(autoincrement())
+  id          String     @id @default(uuid())
   name        String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   Schema      Schema?    @relation(fields: [schemaId], references: [id])
-  schemaId    Int?
+  schemaId    String?
   propValue   PropValue? @relation(fields: [propValueId], references: [id])
-  propValueId Int?       @unique
+  propValueId String?    @unique
 }
 
 model Schema {
-  id                   Int         @id @default(autoincrement())
+  id                   String      @id @default(uuid())
+  alias                String      @unique
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
   props                Prop[]
-  frameId              Int
+  frameId              String
   Page                 Page[]
   ReferenceToPropValue PropValue[]
   Frame                Frame?      @relation("Frame", fields: [frameId], references: [id])
   ParentSchema         Schema?     @relation("ChildrenSchema", fields: [parentSchemaId], references: [id])
-  parentSchemaId       Int?
+  parentSchemaId       String?
   ChildrenSchema       Schema[]    @relation("ChildrenSchema")
 }
 
 model Frame {
-  id            Int       @id @default(autoincrement())
+  id            String    @id @default(uuid())
   name          String    @unique
   description   String?
   icon          String?
@@ -83,7 +84,7 @@ model Frame {
   type          String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  categoryId    Int?
+  categoryId    String?
   isBase        Boolean   @default(false)
   code          String?
   ParentSchemas Schema[]  @relation("Frame")

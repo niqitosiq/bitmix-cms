@@ -1,3 +1,8 @@
-import { Prop } from '.prisma/client'
+import { Prop as PrismaProp } from '.prisma/client'
+import { PropValue } from '.prisma/client'
+
+type Prop = PrismaProp & {
+    propValue?: PropValue
+}
 
 export type { Prop }
