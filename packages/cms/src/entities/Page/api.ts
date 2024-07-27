@@ -21,7 +21,7 @@ export type Body = {
 const createPage = async ({
     name,
     url,
-    pageFrameName = 'PageFrame',
+    pageFrameName = 'Page',
     siteId,
 }: Body): Promise<Page & { Schema: Schema }> => {
     const response = await api.post(`/pages`, {

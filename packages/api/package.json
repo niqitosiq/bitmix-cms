@@ -8,7 +8,8 @@
         "start": "node -r dotenv/config src/app.js",
         "dev": "tsx watch src/app.ts",
         "generate": "npx prisma generate --schema ./src/prisma/schema.prisma",
-        "migrate": "npx prisma migrate dev --schema ./src/prisma/schema.prisma"
+        "migrate": "npx prisma migrate dev --schema ./src/prisma/schema.prisma",
+        "library": "tsx ./generator/index.ts"
     },
     "keywords": [
         "express",
@@ -24,6 +25,7 @@
         "prisma": "^5.16.1",
         "random-words": "^2.0.1",
         "sqlite3": "^5.0.2",
+        "ts-morph": "^23.0.0",
         "uuid": "^10.0.0",
         "yawg": "^1.2.3"
     },

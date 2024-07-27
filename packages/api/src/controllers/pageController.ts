@@ -38,7 +38,7 @@ export class PageController {
             url,
             name,
             siteId,
-            pageFrameName = 'PageFrame',
+            pageFrameName = 'Page',
         } = req.body as {
             url: string
             name: string
