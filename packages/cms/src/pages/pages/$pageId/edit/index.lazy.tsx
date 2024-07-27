@@ -1,15 +1,21 @@
 import { PageInline } from '@entities/Page'
 import { useGetPage } from '@entities/Page/hooks'
 import { useGetSchema } from '@entities/Schema/hooks'
+import { Loading } from '@shared/ui/Loading'
 import { createLazyFileRoute } from '@tanstack/react-router'
+import { ConfigureSchema } from '@widgets/ConfigureSchema'
 
 const PageEditor = () => {
     const { pageId } = Route.useParams()
 
-    const { data: page } = useGetPage(pageId)
-    const { data: schema } = useGetSchema(page?.Schema.id)
+    const { data: page, isLoading: pageLoading } = useGetPage(pageId)
+    const { data: schema, isLoading: schemaLoading } = useGetSchema(
+        page?.Schema.id
+    )
 
-    console.log(schema)
+    if (pageLoading || schemaLoading) {
+        return <Loading />
+    }
 
     return (
         <div>
@@ -20,6 +26,8 @@ const PageEditor = () => {
                     url={page.url}
                 />
             )}
+
+            <ConfigureSchema id={page?.Schema.id!} />
         </div>
     )
 }

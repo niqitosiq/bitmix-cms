@@ -69,8 +69,8 @@ model Schema {
   Page                 Page[]
   ReferenceToPropValue PropValue[]
   Frame                Frame?      @relation("Frame", fields: [frameId], references: [id])
-  ParentSchema         Schema?     @relation("ChildrenSchema", fields: [id], references: [parentSchemaId])
-  parentSchemaId       Int?        @unique
+  ParentSchema         Schema?     @relation("ChildrenSchema", fields: [parentSchemaId], references: [id])
+  parentSchemaId       Int?
   ChildrenSchema       Schema[]    @relation("ChildrenSchema")
 }
 

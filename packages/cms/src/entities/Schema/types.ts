@@ -1,3 +1,20 @@
-import { Schema } from '.prisma/client'
+import { Schema as PrismaSchema } from '.prisma/client'
+import { Frame } from '@entities/Frame'
+import { Node } from '@xyflow/react'
 
-export type { Schema }
+type Schema = PrismaSchema & {
+    ChildrenSchema?: Schema[]
+    Frame?: Frame
+}
+
+type CleanSchema = {
+    id: Schema['id']
+    schema: Schema['frameId']
+    parentSchemaId: Schema['parentSchemaId']
+    updatedAt: Schema['updatedAt']
+    Frame: Schema['Frame']
+}
+
+type SchemaNodeType = Node<CleanSchema, 'schema'>
+
+export type { Schema, SchemaNodeType, CleanSchema }

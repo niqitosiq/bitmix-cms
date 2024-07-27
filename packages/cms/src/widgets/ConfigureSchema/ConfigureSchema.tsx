@@ -1,44 +1,49 @@
-import { FrameChildrenDefinition } from '@entities/Frame/ui/FrameChildrenDefinition'
 import { FrameInline } from '@entities/Frame/ui/FrameInline'
-import { FramePropsDefenition } from '@entities/Frame/ui/FramePropsDefenition'
+import { ChildrenArgumentPort } from '@entities/Frame/ui/PropOut'
 import { PropIn } from '@entities/Prop/ui/PropIn'
-import { Schema } from '@entities/Schema'
+import { Schema, SchemaNodeType } from '@entities/Schema'
 import { useGetSchema } from '@entities/Schema/hooks'
 import { SchemaTreeFlow } from '@entities/Schema/ui/SchemaTreeFlow'
 import { AddSchemaChildren } from '@features/AddSchemaChildren'
 import { ConnectSchemaNodes } from '@features/ConnectSchemaNodes'
+import { DeleteSchema } from '@features/DeleteSchema/DeleteSchema'
 import { Loading } from '@shared/ui/Loading'
 import { NodeCard } from '@shared/ui/NodeCard'
-import { Node, NodeProps, ReactFlow } from '@xyflow/react'
+import { NodeProps, ReactFlow } from '@xyflow/react'
 
-export type SchemaNodeType = Node<{}, 'schema'>
-
-const SchemaNode = (props: NodeProps<SchemaNodeType>) => {
+import '@xyflow/react/dist/style.css'
+import { memo } from 'react'
+const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
     return (
         <NodeCard
             headerSlot={
-                <FramePropsDefenition frame={frame}>
-                    {({ name, defenition }) => (
-                        <PropIn
-                            name={name}
-                            defenition={defenition}
-                            value={props.data.props['name']}
-                        />
-                    )}
-                </FramePropsDefenition>
+                <>
+                    <PropIn isConnectable />
+                </>
+                // <FramePropsDefenition frame={frame}>
+                //     {({ name, defenition }) => (
+                //         <PropIn
+                //             name={name}
+                //             defenition={defenition}
+                //             value={props.data.props['name']}
+                //         />
+                //     )}
+                // </FramePropsDefenition>
             }
             footerSlot={
                 <>
-                    <FrameChildrenDefinition>
+                    <AddSchemaChildren id={data.id} />
+                    <ChildrenArgumentPort isConnectable />
+                    {/* <FrameChildrenDefinition>
                         {({ name, defenition }) => (
-                            <PropOut name={name} defenition={defenition} />
                         )}
                     </FrameChildrenDefinition>
-                    <AddSchemaChildren />
+                    <AddSchemaChildren /> */}
                 </>
             }
         >
-            <FrameInline />
+            <FrameInline frame={data.Frame!} />
+            <DeleteSchema id={data.id} />
         </NodeCard>
     )
 }
@@ -48,7 +53,7 @@ type Props = {
 }
 
 const nodeTypes = {
-    schemaNode: SchemaNode,
+    schema: memo(SchemaNode),
 }
 
 export const ConfigureSchema = ({ id }: Props) => {
@@ -59,17 +64,19 @@ export const ConfigureSchema = ({ id }: Props) => {
     }
 
     return (
-        <SchemaTreeFlow schema={data}>
+        <SchemaTreeFlow schema={data!}>
             {({ nodes, edges }) => (
                 <ConnectSchemaNodes nodes={nodes} edges={edges}>
                     {({ onConnect }) => (
-                        <ReactFlow
-                            nodes={nodes}
-                            edges={edges}
-                            onConnect={onConnect}
-                            nodeTypes={nodeTypes}
-                            fitView
-                        />
+                        <div style={{ height: '100vh', width: '100vw' }}>
+                            <ReactFlow
+                                nodes={nodes}
+                                edges={edges}
+                                onConnect={onConnect}
+                                nodeTypes={nodeTypes}
+                                fitView
+                            />
+                        </div>
                     )}
                 </ConnectSchemaNodes>
             )}

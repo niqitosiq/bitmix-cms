@@ -4,9 +4,9 @@ import { PrismaClient, Prop, PropValue, Schema } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export type SchemaCreationBody = {
-    parentSchemaId: number
-    name: string
-    pageId: number
+    parentSchemaId?: number
+    pageId?: number
+    frameId: number
 }
 export type UpdatePropsToSchemaBody = {
     id?: number
@@ -25,12 +25,15 @@ export class SchemaController {
         res: Response
     ) {
         try {
-            const { parentSchemaId, pageId } = req.body
+            const { parentSchemaId, pageId, frameId } = req.body
 
             const schema = await prisma.schema.create({
                 data: {
-                    ParentSchema: { connect: { id: parentSchemaId } },
-                    Page: { connect: { id: pageId } },
+                    ParentSchema: parentSchemaId
+                        ? { connect: { id: parentSchemaId } }
+                        : undefined,
+                    Page: pageId ? { connect: { id: pageId } } : undefined,
+                    Frame: { connect: { id: frameId } },
                 },
             })
 
@@ -45,7 +48,7 @@ export class SchemaController {
         try {
             const { id } = req.params as unknown as { id: number }
 
-            await prisma.schema.delete({ where: { id } })
+            await prisma.schema.delete({ where: { id: Number(id) } })
 
             res.status(204).end()
         } catch (error) {
@@ -63,6 +66,7 @@ export class SchemaController {
                     ChildrenSchema: {
                         include: {
                             ChildrenSchema: true,
+                            Frame: true,
                         },
                     },
                 },
@@ -78,23 +82,42 @@ export class SchemaController {
     async getSchemaById(req: Request, res: Response) {
         try {
             const { id } = req.params
-            const schema = await prisma.schema.findUnique({
+            const topLevelSchema = await prisma.schema.findUnique({
                 where: { id: Number(id) },
                 include: {
                     props: true,
                     Frame: true,
-                    ChildrenSchema: {
-                        include: {
-                            ChildrenSchema: true,
-                        },
-                    },
+                    ChildrenSchema: true,
                 },
             })
-            if (schema) {
-                res.json(schema)
-            } else {
+
+            if (!topLevelSchema) {
                 res.status(404).json({ message: 'Schema not found' })
+                return
             }
+
+            // find all childrens for schema and include it recursively
+            const findChildren = async (schema: Schema) => {
+                const children = await prisma.schema.findMany({
+                    where: { parentSchemaId: schema.id },
+                    include: {
+                        props: true,
+                        Frame: true,
+                        ChildrenSchema: true,
+                    },
+                })
+
+                for (const child of children) {
+                    child.ChildrenSchema = await findChildren(child)
+                }
+
+                return children
+            }
+
+            res.json({
+                ...topLevelSchema,
+                ChildrenSchema: await findChildren(topLevelSchema!),
+            })
         } catch (error) {
             console.error(error)
             res.status(500).json({ message: 'Internal server error' })
