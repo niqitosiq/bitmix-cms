@@ -1,5 +1,9 @@
-import { Loader } from '@mantine/core'
+import { Loader, MantineSize } from '@mantine/core'
 
-export const Loading = () => {
-    return <Loader color="blue" />
+type Props = {
+    size?: MantineSize
+}
+
+export const Loading = ({ size }: Props) => {
+    return <Loader color="blue" size={size} />
 }

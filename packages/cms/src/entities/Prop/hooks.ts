@@ -4,27 +4,30 @@ import { Schema } from '@entities/Schema'
 import { UpdatePropsToSchemaBody } from '@api/src/controllers/schemaController'
 import { Prop } from './types'
 
-const useUpdatePropInSchema = (
-    id: Schema['id'],
-    body: UpdatePropsToSchemaBody
-) => {
+const useUpdatePropInSchema = (id: Schema['id']) => {
     const queryClient = useQueryClient()
 
     return useMutation({
         mutationKey: ['prop', { id }],
-        mutationFn: () => updatePropToSchema(id, body),
+        mutationFn: updatePropToSchema,
         onSuccess: (updated) => {
-            queryClient.setQueryData(['prop', { id }], updated)
+            queryClient.invalidateQueries({
+                queryKey: ['prop', { id }],
+            })
+            queryClient.invalidateQueries({
+                queryKey: ['schema', { id: updated.schemaId }],
+            })
         },
     })
 }
 
-const useGetProp = (id: Prop['id'], schemaId: Schema['id']) => {
+const useGetProp = (schemaId: Schema['id'], id?: Prop['id']) => {
     const queryClient = useQueryClient()
 
     return useQuery({
         queryKey: ['prop', { id }],
-        queryFn: () => getProp(id),
+        enabled: !!id,
+        queryFn: () => getProp(id!),
         initialData: () => {
             return queryClient.getQueryData(['schema', { id: schemaId }])
         },

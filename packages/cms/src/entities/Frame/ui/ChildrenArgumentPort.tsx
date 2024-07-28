@@ -1,4 +1,5 @@
-import { Text, TooltipFloating } from '@mantine/core'
+import { ActionIcon, Text, TooltipFloating } from '@mantine/core'
+import { IconEdit } from '@tabler/icons-react'
 import { Handle, Position } from '@xyflow/react'
 import { memo } from 'react'
 
@@ -29,7 +30,9 @@ export const ChildrenArgumentPort = memo(
                 }}
             >
                 <TooltipFloating label={type} position="top">
-                    <Text size="xs">{name}</Text>
+                    <Text size="xs" style={{ pointerEvents: 'none' }}>
+                        {name}
+                    </Text>
                 </TooltipFloating>
             </Handle>
         )

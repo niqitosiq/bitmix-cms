@@ -13,10 +13,10 @@ export type SchemaCreationBody = {
 export type UpdatePropsToSchemaBody = {
     id?: string
     name: string
-    type: string
+    type?: string
     mockValue?: string
     reference?: {
-        schemaId: string
+        schemaAlias: string
         fieldName: string
     }
 }
@@ -68,7 +68,11 @@ export class SchemaController {
         try {
             const schemas = await prisma.schema.findMany({
                 include: {
-                    props: true,
+                    props: {
+                        include: {
+                            propValue: true,
+                        },
+                    },
                     Frame: true,
                     ChildrenSchema: {
                         include: {
@@ -92,7 +96,11 @@ export class SchemaController {
             const topLevelSchema = await prisma.schema.findUnique({
                 where: { id },
                 include: {
-                    props: true,
+                    props: {
+                        include: {
+                            propValue: true,
+                        },
+                    },
                     Frame: true,
                     ChildrenSchema: true,
                 },
@@ -108,7 +116,11 @@ export class SchemaController {
                 const children = await prisma.schema.findMany({
                     where: { parentSchemaId: schema.id },
                     include: {
-                        props: true,
+                        props: {
+                            include: {
+                                propValue: true,
+                            },
+                        },
                         Frame: true,
                         ChildrenSchema: true,
                     },
@@ -133,33 +145,54 @@ export class SchemaController {
 
     async updatePropToSchema(req: Request, res: Response) {
         try {
-            const { schemaId } = req.params as unknown as { schemaId: string }
-            const { name, mockValue, reference } =
+            const { schemaAlias } = req.params as unknown as {
+                schemaAlias: string
+            }
+            const { name, mockValue, reference, type } =
                 req.body as UpdatePropsToSchemaBody
 
-            const isSchemaHasPropWithSameName = await prisma.prop.findFirst({
+            const propSchema = await prisma.prop.findFirst({
                 where: {
-                    schemaId: schemaId,
+                    Schema: {
+                        alias: schemaAlias,
+                    },
                     name,
                 },
             })
 
-            if (isSchemaHasPropWithSameName) {
+            if (propSchema) {
                 await prisma.prop.delete({
-                    where: { id: isSchemaHasPropWithSameName.id },
+                    where: { id: propSchema.id },
                 })
+            }
+
+            const schema = await prisma.schema.findUnique({
+                where: { alias: schemaAlias },
+            })
+
+            if (!schema) {
+                res.status(404).json({ message: 'Schema with alias not found' })
+                return
             }
 
             const prop = await prisma.prop.create({
                 data: {
                     name,
+                    Schema: {
+                        connect: { id: schema.id },
+                    },
                     propValue: {
                         create: {
-                            schemaReferenceId: reference?.schemaId,
-                            schemaReferenceField: reference?.fieldName,
                             value: mockValue,
+                            schemaReferenceAlias: reference?.schemaAlias,
+                            schemaReferenceField: reference?.fieldName,
+                            type: type,
                         },
                     },
+                },
+                include: {
+                    propValue: true,
+                    Schema: true,
                 },
             })
 

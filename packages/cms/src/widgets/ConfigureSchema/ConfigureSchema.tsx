@@ -1,16 +1,18 @@
 import { ChildrenArgumentPort } from '@entities/Frame/ui/ChildrenArgumentPort'
 import { FrameInline } from '@entities/Frame/ui/FrameInline'
 import { FramePropsDefenition } from '@entities/Frame/ui/FramePropsDefenition'
+import { Prop } from '@entities/Prop'
 import { PropIn } from '@entities/Prop/ui/PropIn'
 import { Schema, SchemaNodeType } from '@entities/Schema'
 import { useGetSchema } from '@entities/Schema/hooks'
 import { SchemaTreeFlow } from '@entities/Schema/ui/SchemaTreeFlow'
-import { convertSchemaToTranspileReady } from '@entities/TranspiledCode/utils'
 import { AddSchemaChildren } from '@features/AddSchemaChildren'
 import { ConnectSchemaNodes } from '@features/ConnectSchemaNodes'
 import { DeleteSchema } from '@features/DeleteSchema/DeleteSchema'
 import { GetAvailablePropsForFrame } from '@features/GetAvailablePropsForFrame'
+import { TsProp } from '@features/GetAvailablePropsForFrame/GetAvailablePropsForFrame'
 import { TranspileSchema } from '@features/TranspileSchema'
+import { UpdatePropViaMockValue } from '@features/UpdatePropViaMockValue'
 import { UpdateTSExecutable } from '@features/UpdateTSExecutable/UpdateTSExecutable'
 import { Flex } from '@mantine/core'
 import { Loading } from '@shared/ui/Loading'
@@ -34,23 +36,47 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
                         onConnect={(params) =>
                             console.log('handle onConnect', params)
                         }
-                        isConnectable={true}
+                        isConnectable={false}
                     />
 
                     <GetAvailablePropsForFrame schema={data}>
                         {({ props }) => (
-                            <>
-                                <Flex justify={'space-around'}>
-                                    {props?.map((prop) => (
+                            <Flex justify={'space-around'}>
+                                {[...(props || []), ...data.props]?.map(
+                                    (prop: TsProp | Prop) => (
                                         <PropIn
                                             key={prop.name}
                                             name={prop.name}
-                                            type={prop.type}
+                                            type={
+                                                prop.type ||
+                                                (prop as Prop).propValue?.type!
+                                            }
+                                            value={
+                                                data.props.find(
+                                                    (p) => p.name === prop.name
+                                                )?.propValue?.value!
+                                            }
                                             isConnectable
-                                        />
-                                    ))}
-                                </Flex>
-                            </>
+                                        >
+                                            <UpdatePropViaMockValue
+                                                name={prop.name}
+                                                type={
+                                                    prop.type ||
+                                                    (prop as Prop).propValue
+                                                        ?.type
+                                                }
+                                                schemaId={data.id}
+                                                value={
+                                                    data.props.find(
+                                                        (p) =>
+                                                            p.name === prop.name
+                                                    )?.propValue
+                                                }
+                                            />
+                                        </PropIn>
+                                    )
+                                )}
+                            </Flex>
                         )}
                     </GetAvailablePropsForFrame>
                 </>
@@ -68,7 +94,7 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
                                     onConnect={(params) =>
                                         console.log('handle onConnect', params)
                                     }
-                                    isConnectable={true}
+                                    isConnectable={false}
                                 />
                                 <Flex justify={'space-around'}>
                                     {args?.map((arg) => (

@@ -1,5 +1,6 @@
 import { CleanSchema } from '@entities/Schema'
 import { useGetMapOfCurrentSchema } from '@features/GetMapOfCurrentSchema/useGetMapOfCurrentSchema'
+import { Loading } from '@shared/ui/Loading'
 import { useTSManipulator } from '@shared/ui/TypescriptContext/Typescript'
 import { useEffect, useState } from 'react'
 import { QuickInfo } from 'typescript'
@@ -85,5 +86,10 @@ export const FramePropsDefenition = ({ schema, children }: Props) => {
         if (isReady) handler()
     }, [isReady, schema, map, full])
 
-    return <>{children({ args })}</>
+    return (
+        <>
+            {!isReady && <Loading size="xs" />}
+            {children({ args })}
+        </>
+    )
 }

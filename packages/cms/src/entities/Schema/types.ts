@@ -15,6 +15,7 @@ type CleanSchema = {
     parentSchemaId: Schema['parentSchemaId']
     updatedAt: Schema['updatedAt']
     Frame: Schema['Frame']
+    props: Prop[]
 }
 
 type SchemaNodeType = Node<CleanSchema, 'schema'>

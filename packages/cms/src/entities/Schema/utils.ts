@@ -4,7 +4,7 @@ export const getCleanSchema = (schema: Schema): CleanSchema => {
     return {
         id: schema['id'],
         alias: schema['alias'],
-        schema: schema['frameId'],
+        props: schema['props'],
         parentSchemaId: schema['parentSchemaId'],
         updatedAt: schema['updatedAt'],
         Frame: schema['Frame'],

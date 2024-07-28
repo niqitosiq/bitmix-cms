@@ -45,6 +45,7 @@ model PropValue {
   Schema               Schema?  @relation(fields: [schemaReferenceAlias], references: [alias])
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  type                 String?
   propId               String?
   Prop                 Prop?
 }
