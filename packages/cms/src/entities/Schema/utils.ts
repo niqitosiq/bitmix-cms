@@ -3,6 +3,7 @@ import { Schema, CleanSchema } from './types'
 export const getCleanSchema = (schema: Schema): CleanSchema => {
     return {
         id: schema['id'],
+        alias: schema['alias'],
         schema: schema['frameId'],
         parentSchemaId: schema['parentSchemaId'],
         updatedAt: schema['updatedAt'],

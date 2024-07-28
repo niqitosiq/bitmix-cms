@@ -1,11 +1,10 @@
 use pack::create_compiled_code;
 use std::collections::HashMap;
-use subchildren::{ComponentMap, MappedSubchildren};
-use swc_ecma_ast::{JSXElementChild, JSXElementName};
+use subchildren::MappedSubchildren;
+use swc_ecma_ast::JSXElementChild;
 use wasm_bindgen::prelude::*;
 
-use serde::{Deserialize, Serialize};
-use serde_json::Number;
+use serde::Serialize;
 
 mod pack;
 mod props;
@@ -21,8 +20,6 @@ struct Result {
 
 #[wasm_bindgen]
 pub fn transpile(json_schema: &str) -> String {
-    wasm_logger::init(wasm_logger::Config::default());
-
     let components: Vec<pack::Component> = match serde_json::from_str(json_schema) {
         Ok(schema) => schema,
         Err(err) => {

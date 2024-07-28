@@ -11,7 +11,7 @@ type Schema = PrismaSchema & {
 
 type CleanSchema = {
     id: Schema['id']
-    schema: Schema['frameId']
+    alias: Schema['alias']
     parentSchemaId: Schema['parentSchemaId']
     updatedAt: Schema['updatedAt']
     Frame: Schema['Frame']

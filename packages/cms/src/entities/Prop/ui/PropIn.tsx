@@ -1,21 +1,35 @@
+import { Text, Tooltip, TooltipFloating } from '@mantine/core'
 import { Handle, Position } from '@xyflow/react'
 import { memo } from 'react'
 
 type Props = {
     isConnectable: boolean
+    name?: string
+    type?: string
 }
 
-export const PropIn = memo(({ isConnectable }: Props) => {
+export const PropIn = memo(({ isConnectable, name, type }: Props) => {
     return (
-        <div>
-            Prop
-            <Handle
-                type="target"
-                position={Position.Top}
-                style={{ background: '#555' }}
-                onConnect={(params) => console.log('handle onConnect', params)}
-                isConnectable={isConnectable}
-            />
-        </div>
+        <Handle
+            id={name}
+            type="target"
+            position={Position.Top}
+            onConnect={(params) => console.log('handle onConnect', params)}
+            isConnectable={isConnectable}
+            style={{
+                position: 'static',
+                background: 'var(--mantine-primary-color-light-hover)',
+                width: 'auto',
+                height: 'auto',
+                padding: '5px',
+                borderRadius: '5px',
+                border: 0,
+                transform: 'none',
+            }}
+        >
+            <TooltipFloating label={type} position="top">
+                <Text size="xs">{name}</Text>
+            </TooltipFloating>
+        </Handle>
     )
 })

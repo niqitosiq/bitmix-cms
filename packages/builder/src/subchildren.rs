@@ -5,9 +5,9 @@ use serde_json::Number;
 use swc_common::Spanned;
 use swc_common::{sync::Lrc, SourceMap};
 use swc_ecma_ast::{
-    BlockStmtOrExpr, Expr, ExprStmt, Ident, JSXElement, JSXElementChild, JSXElementName, JSXExpr,
-    JSXExprContainer, JSXFragment, JSXMemberExpr, JSXObject, JSXOpeningElement, Lit, ModuleItem,
-    Stmt,
+    BindingIdent, BlockStmtOrExpr, Expr, ExprStmt, Ident, JSXElement, JSXElementChild,
+    JSXElementName, JSXExpr, JSXExprContainer, JSXFragment, JSXMemberExpr, JSXObject,
+    JSXOpeningElement, Lit, ModuleItem, Pat, Stmt,
 };
 
 use crate::pack::{self, Component};
@@ -49,6 +49,7 @@ pub struct ComponentMap {
     props: HashMap<String, Vec<Number>>,
     own: Vec<Number>,
     supplemened: Number,
+    children_params: Vec<Number>,
 }
 
 #[derive(Debug, Serialize)]
@@ -75,14 +76,31 @@ fn get_element_map(element: &JSXElement) -> ChildrenMap {
         _ => "JSXElementName".into(),
     };
 
-    print!("element.opening!! {:?}\n", element.opening.clone().span);
-    print!(
-        "element.opening!! {:?}\n",
-        element.opening.clone().span.hi.0
-    );
     let supplemened = Number::from(element.opening.clone().span.hi.0);
 
     let props_positions = get_props_of_element(element.opening.clone());
+
+    let children_params = match element.children.clone().get(0) {
+        Some(child) => match child {
+            JSXElementChild::JSXExprContainer(element) => match &element.expr {
+                JSXExpr::Expr(expr) => match expr.as_ref() {
+                    Expr::Arrow(arrow) => match arrow.params.get(0) {
+                        Some(params) => match params {
+                            Pat::Ident(BindingIdent { id, .. }) => {
+                                vec![Number::from(id.span.lo.0), Number::from(id.span.hi.0)]
+                            }
+                            _ => vec![],
+                        },
+                        None => vec![],
+                    },
+                    _ => vec![],
+                },
+                _ => vec![],
+            },
+            _ => vec![],
+        },
+        None => vec![],
+    };
 
     ChildrenMap {
         name: name.to_string(),
@@ -90,6 +108,7 @@ fn get_element_map(element: &JSXElement) -> ChildrenMap {
             props: props_positions,
             own: position,
             supplemened,
+            children_params,
         },
     }
 }
@@ -159,7 +178,6 @@ fn parse_element_subchildren(
 
             match element.opening.name {
                 JSXElementName::Ident(Ident { sym, .. }) => {
-                    print!("element name!! {:?}\n", sym);
                     if sym == "DebugComponent" {
                         element.children.iter().for_each(|child| {
                             parse_element_subchildren(map, child.clone(), _component.clone());

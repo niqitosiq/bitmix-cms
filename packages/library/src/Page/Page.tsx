@@ -1,5 +1,5 @@
 type Props = {
-    children: React.ReactNode
+    children: (arg: {}) => React.ReactNode
 }
 
 export const Page = ({ children }: Props) => {
@@ -9,7 +9,7 @@ export const Page = ({ children }: Props) => {
 
             <div>
                 <p>It is my children:</p>
-                {children}
+                {children({})}
             </div>
         </div>
     )

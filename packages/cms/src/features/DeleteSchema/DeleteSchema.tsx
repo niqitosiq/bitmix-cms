@@ -9,7 +9,7 @@ type Props = {
 export const DeleteSchema = ({ id }: Props) => {
     const { mutate } = useDeleteSchema()
     return (
-        <ActionIcon variant="filled" onClick={() => mutate(id)}>
+        <ActionIcon variant="filled" onClick={() => mutate(id)} size={'xs'}>
             <IconTrash />
         </ActionIcon>
     )

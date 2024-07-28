@@ -1,0 +1,1 @@
+export { GetAvailablePropsForFrame } from './GetAvailablePropsForFrame'

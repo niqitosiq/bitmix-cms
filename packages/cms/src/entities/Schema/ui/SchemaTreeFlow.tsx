@@ -13,8 +13,8 @@ type Props = {
     }) => JSX.Element
 }
 
-const nodeWidth = 200
-const nodeHeight = 100
+const nodeWidth = 150
+const nodeHeight = 150
 
 const getLayoutedElements = (
     nodes: SchemaNodeType[],
@@ -78,6 +78,7 @@ export const SchemaTreeFlow = ({ schema, children }: Props) => {
                 id: `${parentSchema.id}-${schema.id}`,
                 source: `${parentSchema.id}`,
                 target: `${schema.id}`,
+                animated: true,
             })
         })
 

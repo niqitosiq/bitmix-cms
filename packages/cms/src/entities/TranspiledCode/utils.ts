@@ -31,7 +31,7 @@ export const convertSchemaToTranspileReady = (
     const transpileReady: SchemaToTranspileComponent = {
         id: schema.alias,
         props: makePropsTranspiled(schema.props),
-        type: schema.Frame!.name,
+        type: 'library.' + schema.Frame!.name,
         children: [],
     }
 

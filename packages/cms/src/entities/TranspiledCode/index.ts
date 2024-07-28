@@ -12,6 +12,7 @@ export type Map = {
     map: {
         name: string
         component: {
+            children_params: [number, number] | []
             own: Array<number>
             props: Record<string, Array<number>>
             supplemened: number
