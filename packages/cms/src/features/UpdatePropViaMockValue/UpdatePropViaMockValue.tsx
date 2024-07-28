@@ -31,7 +31,9 @@ const Dropdown = ({ schemaId, name, type, value, children }: Props) => {
     return (
         <Menu shadow="md" width={200} trapFocus opened={opened} onClose={close}>
             <Menu.Target>
-                <div onClick={open}>{children}</div>
+                <div onClick={open} style={{ lineHeight: 0, height: 'auto' }}>
+                    {children}
+                </div>
             </Menu.Target>
 
             <Menu.Dropdown>

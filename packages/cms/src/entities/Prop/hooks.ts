@@ -17,6 +17,9 @@ const useUpdatePropInSchema = (id: Schema['id']) => {
             queryClient.invalidateQueries({
                 queryKey: ['schema', { id: updated.schemaId }],
             })
+            queryClient.invalidateQueries({
+                queryKey: ['schema'],
+            })
         },
     })
 }

@@ -1,7 +1,7 @@
 import { ChildrenArgumentPort } from '@entities/Frame/ui/ChildrenArgumentPort'
 import { FrameInline } from '@entities/Frame/ui/FrameInline'
 import { FramePropsDefenition } from '@entities/Frame/ui/FramePropsDefenition'
-import { Prop } from '@entities/Prop'
+import { Prop, useUpdatePropInSchema } from '@entities/Prop'
 import { PropIn } from '@entities/Prop/ui/PropIn'
 import { Schema, SchemaNodeType } from '@entities/Schema'
 import { useGetSchema } from '@entities/Schema/hooks'
@@ -15,15 +15,52 @@ import { TranspileSchema } from '@features/TranspileSchema'
 import { UpdatePropViaMockValue } from '@features/UpdatePropViaMockValue'
 import { UpdateTSExecutable } from '@features/UpdateTSExecutable/UpdateTSExecutable'
 import { Flex } from '@mantine/core'
+import { ButtonEdge } from '@shared/ui/ButtonEdge'
 import { Loading } from '@shared/ui/Loading'
 import { NodeCard } from '@shared/ui/NodeCard'
-import { TypescriptProvider } from '@shared/ui/TypescriptContext/Typescript'
-import { Handle, NodeProps, Position, ReactFlow } from '@xyflow/react'
+import {
+    TypescriptProvider,
+    useTSManipulator,
+} from '@shared/ui/TypescriptContext/Typescript'
+import {
+    Connection,
+    Handle,
+    NodeProps,
+    Position,
+    ReactFlow,
+    useUpdateNodeInternals,
+} from '@xyflow/react'
 
 import '@xyflow/react/dist/style.css'
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 
 const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
+    const { mutate } = useUpdatePropInSchema(data.id)
+    const onConnect = (params: Connection, type?: TsProp['type']) => {
+        console.log(params)
+        mutate({
+            schemaAlias: params.targetHandle!.split('-')[0],
+            body: {
+                name: params.targetHandle!.split('-')[1],
+                type,
+                reference: {
+                    schemaAlias: params.sourceHandle!.split('-')[0],
+                    fieldName: params.sourceHandle!.split('-')[1],
+                },
+            },
+        })
+    }
+
+    const { full } = useTSManipulator()
+
+    const updateNodeInternals = useUpdateNodeInternals()
+    useEffect(() => {
+        setTimeout(() => {
+            console.log('data.alias', data.alias)
+            updateNodeInternals(data.alias)
+        }, 15000)
+    }, [full])
+
     return (
         <NodeCard
             headerSlot={
@@ -32,49 +69,38 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
                         id={'hierarchy'}
                         type="target"
                         position={Position.Top}
-                        style={{ background: '#555' }}
-                        onConnect={(params) =>
-                            console.log('handle onConnect', params)
-                        }
-                        isConnectable={false}
                     />
 
                     <GetAvailablePropsForFrame schema={data}>
                         {({ props }) => (
                             <Flex justify={'space-around'}>
                                 {[...(props || []), ...data.props]?.map(
-                                    (prop: TsProp | Prop) => (
-                                        <PropIn
-                                            key={prop.name}
-                                            name={prop.name}
-                                            type={
-                                                prop.type ||
-                                                (prop as Prop).propValue?.type!
-                                            }
-                                            value={
-                                                data.props.find(
-                                                    (p) => p.name === prop.name
-                                                )?.propValue?.value!
-                                            }
-                                            isConnectable
-                                        >
-                                            <UpdatePropViaMockValue
+                                    (prop: TsProp | Prop) => {
+                                        const value = data.props.find(
+                                            (p) => p.name === prop.name
+                                        )?.propValue
+
+                                        return (
+                                            <PropIn
+                                                key={prop.name}
                                                 name={prop.name}
-                                                type={
-                                                    prop.type ||
-                                                    (prop as Prop).propValue
-                                                        ?.type
+                                                type={prop.type}
+                                                schemaAlias={data.alias}
+                                                value={value}
+                                                onConnect={(params) =>
+                                                    onConnect(params, prop.type)
                                                 }
-                                                schemaId={data.id}
-                                                value={
-                                                    data.props.find(
-                                                        (p) =>
-                                                            p.name === prop.name
-                                                    )?.propValue
-                                                }
-                                            />
-                                        </PropIn>
-                                    )
+                                                isConnectable
+                                            >
+                                                <UpdatePropViaMockValue
+                                                    name={prop.name}
+                                                    type={prop.type}
+                                                    schemaId={data.id}
+                                                    value={value}
+                                                />
+                                            </PropIn>
+                                        )
+                                    }
                                 )}
                             </Flex>
                         )}
@@ -90,15 +116,14 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
                                     id={'hierarchy'}
                                     type="source"
                                     position={Position.Bottom}
-                                    style={{ background: '#555' }}
-                                    onConnect={(params) =>
-                                        console.log('handle onConnect', params)
-                                    }
-                                    isConnectable={false}
                                 />
                                 <Flex justify={'space-around'}>
                                     {args?.map((arg) => (
                                         <ChildrenArgumentPort
+                                            onConnect={(params) =>
+                                                onConnect(params)
+                                            }
+                                            schemaAlias={data.alias}
                                             key={arg.name}
                                             name={arg.name}
                                             type={arg.type}
@@ -127,6 +152,10 @@ const nodeTypes = {
     schema: memo(SchemaNode),
 }
 
+const edgeTypes = {
+    prop: ButtonEdge,
+}
+
 export const ConfigureSchema = ({ id }: Props) => {
     const { data, isLoading } = useGetSchema(id)
 
@@ -153,12 +182,20 @@ export const ConfigureSchema = ({ id }: Props) => {
                                                 width: '100vw',
                                             }}
                                         >
+                                            {JSON.stringify(edges)}
                                             <ReactFlow
                                                 nodes={nodes}
                                                 edges={edges}
                                                 onConnect={onConnect}
                                                 nodeTypes={nodeTypes}
+                                                edgeTypes={edgeTypes}
                                                 fitView
+                                                onEdgesChange={(a) => {
+                                                    console.log(
+                                                        'onEdgesChange',
+                                                        a
+                                                    )
+                                                }}
                                             />
                                         </div>
                                     )}

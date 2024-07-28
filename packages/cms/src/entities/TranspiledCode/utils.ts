@@ -13,8 +13,10 @@ const makePropsTranspiled = (
         )
         .map((prop) => ({
             [prop.name]:
-                `&${prop.propValue?.schemaReferenceAlias}[${prop.propValue?.schemaReferenceField}]` ||
-                prop.propValue?.value,
+                prop.propValue?.schemaReferenceAlias &&
+                prop.propValue?.schemaReferenceField
+                    ? `&${prop.propValue?.schemaReferenceAlias}["${prop.propValue?.schemaReferenceField}"]`
+                    : prop.propValue?.value,
         }))
         .reduce(
             (acc, prop) => ({

@@ -1,22 +1,25 @@
+import { Schema } from '@entities/Schema'
 import { ActionIcon, Text, TooltipFloating } from '@mantine/core'
 import { IconEdit } from '@tabler/icons-react'
-import { Handle, Position } from '@xyflow/react'
+import { Handle, OnConnect, Position } from '@xyflow/react'
 import { memo } from 'react'
 
 type Props = {
     isConnectable: boolean
     name?: string
+    onConnect: OnConnect
     type?: string
+    schemaAlias: Schema['alias']
 }
 
 export const ChildrenArgumentPort = memo(
-    ({ isConnectable, name, type }: Props) => {
+    ({ isConnectable, onConnect, schemaAlias, name, type }: Props) => {
         return (
             <Handle
-                id={name}
+                id={`${schemaAlias}-${name}`}
                 type="source"
                 position={Position.Top}
-                onConnect={(params) => console.log('handle onConnect', params)}
+                onConnect={onConnect}
                 isConnectable={true}
                 style={{
                     position: 'static',

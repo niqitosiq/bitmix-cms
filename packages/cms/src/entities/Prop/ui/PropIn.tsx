@@ -1,24 +1,36 @@
 import { ActionIcon, Flex, Text, Tooltip, TooltipFloating } from '@mantine/core'
-import { IconEdit } from '@tabler/icons-react'
-import { Handle, Position } from '@xyflow/react'
+import { IconEdit, IconInfoCircle } from '@tabler/icons-react'
+import { Handle, Position, OnConnect } from '@xyflow/react'
 import { memo } from 'react'
+import { Prop } from '../types'
+import { Schema } from '@entities/Schema'
 
 type Props = {
     isConnectable: boolean
     name?: string
     type?: string
-    value?: string
+    value?: Prop['propValue']
     children?: React.ReactNode
+    onConnect: OnConnect
+    schemaAlias: Schema['alias']
 }
 
 export const PropIn = memo(
-    ({ isConnectable, value, name, type, children }: Props) => {
+    ({
+        isConnectable,
+        schemaAlias,
+        onConnect,
+        value,
+        name,
+        type,
+        children,
+    }: Props) => {
         return (
             <Handle
-                id={name}
+                id={`${schemaAlias}-${name}`}
                 type="target"
                 position={Position.Top}
-                onConnect={(params) => console.log('handle onConnect', params)}
+                onConnect={onConnect}
                 isConnectable={true}
                 style={{
                     position: 'static',
@@ -31,22 +43,29 @@ export const PropIn = memo(
                     transform: 'none',
                 }}
             >
-                <TooltipFloating
-                    label={`${type}; Value = ${value}`}
-                    position="top"
+                <Flex
+                    align={'center'}
+                    gap={5}
+                    style={{ pointerEvents: 'none' }}
                 >
-                    <Flex
-                        align={'center'}
-                        gap={5}
-                        style={{ pointerEvents: 'none' }}
-                    >
-                        <Text size="xs" style={{ pointerEvents: 'auto' }}>
-                            {name}
-                        </Text>
+                    <Text size="xs" style={{ pointerEvents: 'none' }}>
+                        {name}
+                    </Text>
 
-                        {children}
-                    </Flex>
-                </TooltipFloating>
+                    <TooltipFloating
+                        label={`${type}; Value = ${value?.value}`}
+                        position="top"
+                    >
+                        <ActionIcon
+                            size={'xs'}
+                            style={{ pointerEvents: 'all', zIndex: 10 }}
+                        >
+                            <IconInfoCircle></IconInfoCircle>
+                        </ActionIcon>
+                    </TooltipFloating>
+
+                    {children}
+                </Flex>
             </Handle>
         )
     }
