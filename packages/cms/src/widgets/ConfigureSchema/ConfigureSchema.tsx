@@ -15,10 +15,7 @@ import { UpdateTSExecutable } from '@features/UpdateTSExecutable/UpdateTSExecuta
 import { Flex } from '@mantine/core'
 import { Loading } from '@shared/ui/Loading'
 import { NodeCard } from '@shared/ui/NodeCard'
-import {
-    TypescriptProvider,
-    useTSManipulator,
-} from '@shared/ui/TypescriptContext/Typescript'
+import { TypescriptProvider } from '@shared/ui/TypescriptContext/Typescript'
 import { Handle, NodeProps, Position, ReactFlow } from '@xyflow/react'
 
 import '@xyflow/react/dist/style.css'

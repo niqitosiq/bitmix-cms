@@ -16,7 +16,7 @@ export const ChildrenArgumentPort = memo(
                 type="source"
                 position={Position.Top}
                 onConnect={(params) => console.log('handle onConnect', params)}
-                isConnectable={isConnectable}
+                isConnectable={true}
                 style={{
                     position: 'static',
                     background: 'var(--mantine-primary-color-light-hover)',

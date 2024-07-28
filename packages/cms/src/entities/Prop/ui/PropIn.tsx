@@ -15,7 +15,7 @@ export const PropIn = memo(({ isConnectable, name, type }: Props) => {
             type="target"
             position={Position.Top}
             onConnect={(params) => console.log('handle onConnect', params)}
-            isConnectable={isConnectable}
+            isConnectable={true}
             style={{
                 position: 'static',
                 background: 'var(--mantine-primary-color-light-hover)',
