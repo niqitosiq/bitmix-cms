@@ -61,7 +61,7 @@ export const UpdateTSExecutable = ({ code, map, schema, children }: Props) => {
 
         if (manipulatorRef?.current && code && isReady) {
             manipulatorRef?.current.updateFile('input.tsx', fullDefenition)
-            if (setExtraLength) setExtraLength(allBefore.length)
+            if (setExtraLength) setExtraLength(allBefore.length - 2)
             if (setMap && map) setMap(map)
             if (setFull) setFull(fullDefenition)
         }

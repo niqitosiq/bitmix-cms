@@ -5,6 +5,7 @@ import { useCreateSchema, useGetSchema } from '@entities/Schema/hooks'
 import { Button, Modal, Text } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { Loading } from '@shared/ui/Loading'
+import { IconPlus } from '@tabler/icons-react'
 
 type Props = {
     id: Schema['id']
@@ -45,7 +46,9 @@ export const AddSchemaChildren = ({ id }: Props) => {
                     }}
                 />
             </Modal>
-            <Button onClick={toggle}>Add Children</Button>
+            <Button onClick={toggle} size="compact-xs" w={'100%'}>
+                Children <IconPlus width="15px" height="15px" />
+            </Button>
         </>
     )
 }

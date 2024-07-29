@@ -3,7 +3,7 @@ import { Schema, SchemaNodeType } from '../types'
 import dagre from '@dagrejs/dagre'
 import { Edge, useEdgesState, useNodesState } from '@xyflow/react'
 import { getCleanSchema, iterateOverChildrenSchemas } from '../utils'
-import { useTSManipulator } from '@shared/ui/TypescriptContext/Typescript'
+import { useTSManipulator } from '@shared/ui/TypescriptContext'
 
 type Props = {
     schema: Schema
@@ -76,23 +76,26 @@ export const SchemaTreeFlow = ({ schema, children }: Props) => {
                 position: { x: 0, y: 0 },
                 data: getCleanSchema(schema),
                 type: 'schema',
+                zIndex: 1,
             })
             initialEdges.push({
                 id: `${parentSchema.alias}-${schema.alias}`,
                 source: `${parentSchema.alias}`,
+                sourceHandle: 'hierarchy',
+                targetHandle: 'hierarchy',
                 target: `${schema.alias}`,
                 animated: true,
             })
             schema.props.forEach((prop) => {
                 if (prop.propValue?.schemaReferenceAlias && isReady) {
-                    console.log(prop.propValue)
-
                     initialEdges.push({
                         id: `${schema.alias}-${prop.propValue.schemaReferenceAlias}-${prop.name}`,
-                        source: `${prop.propValue.schemaReferenceAlias}-${prop.propValue.schemaReferenceField}`,
-                        target: `${schema.alias}-${prop.name}`,
+                        sourceHandle: `${prop.propValue.schemaReferenceAlias}-${prop.propValue.schemaReferenceField}`,
+                        targetHandle: `${schema.alias}-${prop.name}`,
+                        source: `${prop.propValue.schemaReferenceAlias}`,
+                        target: `${schema.alias}`,
+                        zIndex: 1000,
                         type: 'step',
-                        // animated: true,
                     })
                 }
             })
@@ -100,23 +103,15 @@ export const SchemaTreeFlow = ({ schema, children }: Props) => {
 
         const layouted = getLayoutedElements(initalNodes, initialEdges)
 
-        console.log(layouted)
         return layouted
     }
 
     useEffect(() => {
         const layouted = onUpdate()
 
-        if (!isReady) {
-            setNodes([...layouted.nodes])
-            setEdges([...layouted.edges])
-        } else {
-            setNodes([...layouted.nodes])
-            setTimeout(() => setEdges([...layouted.edges]), 15000)
-        }
+        setNodes([...layouted.nodes])
+        setEdges([...layouted.edges])
     }, [schema, isReady, full])
-
-    console.log(nodes, edges)
 
     return <>{children({ nodes, edges, onUpdate })}</>
 }

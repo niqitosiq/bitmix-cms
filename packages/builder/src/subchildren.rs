@@ -238,6 +238,24 @@ mod tests {
     use super::*;
 
     #[test]
+    fn prop_parsing_works() {
+        let schema = r#"[{"id":"pageburn781e","props":{},"type":"library.Page","children":[{"id":"plainb9d1","props":{},"type":"library.QueryParser","children":[{"id":"graph4ae9","props":{"text":"&plainb9d1[\"value\"]"},"type":"library.Paragraph","children":[]}]}]}]"#;
+        let components = match serde_json::from_str(schema) {
+            Ok(schema) => schema,
+            Err(err) => {
+                panic!("Error deserializing JSON schema: {}", err)
+            }
+        };
+
+        let jsx = r#"< ><DebugComponent id="pageburn781e" ><library.Page >{(pageburn781e)=>(<><DebugComponent id="plainb9d1" ><library.QueryParser >{(plainb9d1)=>(<><DebugComponent id="graph4ae9" ><library.Paragraph text={plainb9d1["value"]} >{(graph4ae9)=>(<></>)}</library.Paragraph></DebugComponent></>)}</library.QueryParser></DebugComponent></>)}</library.Page></DebugComponent></>"#;
+
+        let map = create_component_map(&jsx.into(), &components);
+
+        let text = map.get(2);
+        println!("{:?}", text);
+    }
+
+    #[test]
     fn it_works() {
         let schema = r#"
       [

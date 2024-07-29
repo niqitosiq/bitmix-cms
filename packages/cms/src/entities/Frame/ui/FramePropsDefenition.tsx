@@ -2,6 +2,7 @@ import { CleanSchema } from '@entities/Schema'
 import { useGetMapOfCurrentSchema } from '@features/GetMapOfCurrentSchema/useGetMapOfCurrentSchema'
 import { Loading } from '@shared/ui/Loading'
 import { useTSManipulator } from '@shared/ui/TypescriptContext/Typescript'
+import { useUpdateNodeInternals } from '@xyflow/react'
 import { useEffect, useState } from 'react'
 import { QuickInfo } from 'typescript'
 
@@ -57,6 +58,7 @@ export const FramePropsDefenition = ({ schema, children }: Props) => {
 
     const { currentSchema } = useGetMapOfCurrentSchema({ schema })
 
+    const updateNodeInternals = useUpdateNodeInternals()
     const handler = () => {
         if (!currentSchema) return
 
@@ -77,9 +79,10 @@ export const FramePropsDefenition = ({ schema, children }: Props) => {
         if (!childrenArgs) return
 
         const args = getTsQuickInfoMeaningful(childrenArgs.displayParts)
-        console.log(args)
 
         setArgs(args)
+
+        updateNodeInternals(schema.alias)
     }
 
     useEffect(() => {

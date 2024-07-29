@@ -7,7 +7,7 @@ use swc_common::{sync::Lrc, SourceMap};
 use swc_ecma_ast::{
     BlockStmtOrExpr, Bool, Expr, ExprStmt, Ident, JSXAttr, JSXAttrName, JSXAttrOrSpread,
     JSXAttrValue, JSXElementChild, JSXElementName, JSXExpr, JSXExprContainer, JSXFragment,
-    JSXMemberExpr, JSXObject, JSXOpeningElement, Lit, ModuleItem, Stmt,
+    JSXMemberExpr, JSXObject, JSXOpeningElement, Lit, MemberExpr, ModuleItem, Stmt,
 };
 
 pub fn get_props_of_element(element: JSXOpeningElement) -> HashMap<String, Vec<Number>> {
@@ -31,6 +31,7 @@ pub fn get_props_of_element(element: JSXOpeningElement) -> HashMap<String, Vec<N
                         vec![Number::from(span.lo.0), Number::from(span.hi.0)]
                     }
                     Some(JSXAttrValue::JSXExprContainer(JSXExprContainer { expr, .. })) => {
+                        println!("{:?}", expr);
                         match expr {
                             JSXExpr::Expr(expr) => match *expr {
                                 Expr::Lit(lit) => match lit {
@@ -40,8 +41,15 @@ pub fn get_props_of_element(element: JSXOpeningElement) -> HashMap<String, Vec<N
                                     ],
                                     _ => vec![],
                                 },
+                                Expr::Member(member) => match member {
+                                    _ => vec![
+                                        Number::from(member.span.lo.0),
+                                        Number::from(member.span.hi.0),
+                                    ],
+                                },
                                 _ => vec![],
                             },
+
                             _ => vec![],
                         }
                     }

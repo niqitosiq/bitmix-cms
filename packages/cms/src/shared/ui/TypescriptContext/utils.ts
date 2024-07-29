@@ -176,12 +176,8 @@ export const createTypeScriptSandbox = async (
                 if (path.includes('.d.ts')) fsMap.set('file://' + path, code)
             },
             progress: () => {},
-            started: () => {
-                console.log('ATA start')
-            },
-            finished: () => {
-                console.log('ATA done')
-            },
+            started: () => {},
+            finished: () => {},
         },
     })
 

@@ -53,7 +53,7 @@ export const PropIn = memo(
                     </Text>
 
                     <TooltipFloating
-                        label={`${type}; Value = ${value?.value}`}
+                        label={`${type}; Value = ${value?.schemaReferenceAlias ? `${value?.schemaReferenceAlias}['${value?.schemaReferenceField}']` : value?.value}`}
                         position="top"
                     >
                         <ActionIcon

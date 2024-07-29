@@ -1,6 +1,6 @@
 import { Schema } from '@entities/Schema'
-import { ActionIcon, Text, TooltipFloating } from '@mantine/core'
-import { IconEdit } from '@tabler/icons-react'
+import { ActionIcon, Flex, Text, TooltipFloating } from '@mantine/core'
+import { IconInfoCircle } from '@tabler/icons-react'
 import { Handle, OnConnect, Position } from '@xyflow/react'
 import { memo } from 'react'
 
@@ -18,7 +18,7 @@ export const ChildrenArgumentPort = memo(
             <Handle
                 id={`${schemaAlias}-${name}`}
                 type="source"
-                position={Position.Top}
+                position={Position.Bottom}
                 onConnect={onConnect}
                 isConnectable={true}
                 style={{
@@ -32,11 +32,24 @@ export const ChildrenArgumentPort = memo(
                     transform: 'none',
                 }}
             >
-                <TooltipFloating label={type} position="top">
+                <Flex
+                    align={'center'}
+                    gap={5}
+                    style={{ pointerEvents: 'none' }}
+                >
                     <Text size="xs" style={{ pointerEvents: 'none' }}>
                         {name}
                     </Text>
-                </TooltipFloating>
+
+                    <TooltipFloating label={`${type}`} position="top">
+                        <ActionIcon
+                            size={'xs'}
+                            style={{ pointerEvents: 'all', zIndex: 10 }}
+                        >
+                            <IconInfoCircle></IconInfoCircle>
+                        </ActionIcon>
+                    </TooltipFloating>
+                </Flex>
             </Handle>
         )
     }

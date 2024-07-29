@@ -17,7 +17,7 @@ export type Body = {
 }
 const createSite = async (site: Body): Promise<Site> => {
     const response = await api.post('/sites', site)
-    console.log('createSite', site)
+
     return response.data
 }
 
