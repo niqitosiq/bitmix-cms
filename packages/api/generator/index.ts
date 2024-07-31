@@ -82,7 +82,7 @@ const start = async () => {
                                 name,
                                 type,
                                 isBase: true,
-                                code: `() => Library.${name}`,
+                                code: `() => library.${name}`,
                             },
                         })
                     } else {
@@ -92,7 +92,7 @@ const start = async () => {
                                 name,
                                 type,
                                 isBase: true,
-                                code: `() => Library.${name}`,
+                                code: `() => library.${name}`,
                             },
                         })
                     }

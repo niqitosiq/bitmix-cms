@@ -11,7 +11,6 @@ type Props = {
 
 export const transpile = (schema: Schema): Transpiled => {
     const transpileReady = convertSchemaToTranspileReady(schema)
-    console.log(transpileReady)
     const stringified = JSON.stringify([transpileReady], null, 2)
     return JSON.parse(originalTranspile(stringified))
 }

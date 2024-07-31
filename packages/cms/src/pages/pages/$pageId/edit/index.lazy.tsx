@@ -4,6 +4,7 @@ import { useGetSchema } from '@entities/Schema/hooks'
 import { Loading } from '@shared/ui/Loading'
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { ConfigureSchema } from '@widgets/ConfigureSchema'
+import { RenderedSchema } from '@widgets/RenderedSchema'
 
 const PageEditor = () => {
     const { pageId } = Route.useParams()
@@ -27,6 +28,7 @@ const PageEditor = () => {
                 />
             )}
 
+            <RenderedSchema id={page?.Schema.id!} />
             <ConfigureSchema id={page?.Schema.id!} />
         </div>
     )
