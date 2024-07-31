@@ -3,7 +3,7 @@ import { useGetSchema } from '@entities/Schema/hooks'
 import { transpile } from '@features/TranspileSchema/TranspileSchema'
 import { DebugComponent } from '@shared/ui/DebugComponent'
 import React, { useEffect, useRef, useState } from 'react'
-import { library } from '../../../../library/library'
+import { library } from '../../../library/library'
 
 type Props = {
     id: Schema['id']
@@ -26,11 +26,7 @@ export const RenderedSchema = ({ id }: Props) => {
                   return () => { return ${code} }
                 }`)
 
-            renderedRef.current = (
-                <DebugComponent>
-                    {F()(React, DebugComponent, library)()}
-                </DebugComponent>
-            )
+            renderedRef.current = F()(React, DebugComponent, library)()
             setRender((r) => !r)
         } catch (e) {
             console.log(e)

@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { Schema, SchemaNodeType } from '../types'
-import dagre from '@dagrejs/dagre'
 import { Edge, useEdgesState, useNodesState } from '@xyflow/react'
 import { getCleanSchema, iterateOverChildrenSchemas } from '../utils'
 import { useTSManipulator } from '@shared/ui/TypescriptContext'
+import dagre from '@dagrejs/dagre'
 
 type Props = {
     schema: Schema

@@ -93,8 +93,8 @@ export class SchemaController {
     async getSchemaById(req: Request, res: Response) {
         try {
             const { id } = req.params
-            const topLevelSchema = await prisma.schema.findUnique({
-                where: { id },
+            const topLevelSchema = await prisma.schema.findFirst({
+                where: { OR: [{ id }, { alias: id }] },
                 include: {
                     props: {
                         include: {
