@@ -84,7 +84,6 @@ export const SchemaTreeFlow = ({ schema, children }: Props) => {
                 sourceHandle: 'hierarchy',
                 targetHandle: 'hierarchy',
                 target: `${schema.alias}`,
-                animated: true,
             })
             schema.props.forEach((prop) => {
                 if (prop.propValue?.schemaReferenceAlias && isReady) {
@@ -96,6 +95,7 @@ export const SchemaTreeFlow = ({ schema, children }: Props) => {
                         target: `${schema.alias}`,
                         zIndex: 1000,
                         type: 'step',
+                        animated: true,
                     })
                 }
             })
