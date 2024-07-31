@@ -1,0 +1,19 @@
+{
+  "name": "builder",
+  "collaborators": [
+    "niqitosiq <nikitashtanko@yahoo.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "builder_bg.wasm",
+    "builder.js",
+    "builder_bg.js",
+    "builder.d.ts"
+  ],
+  "module": "builder.js",
+  "types": "builder.d.ts",
+  "sideEffects": [
+    "./builder.js",
+    "./snippets/*"
+  ]
+}
