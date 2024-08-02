@@ -39,7 +39,7 @@ export const GetAvailablePropsForFrame = ({ schema, children }: Props) => {
                 }
             )
 
-        const detailed = completitions?.entries.slice(0, 15).map((entry) => {
+        const detailed = completitions?.entries.map((entry) => {
             return manipulatorRef?.current?.languageService.getCompletionEntryDetails(
                 'input.tsx',
                 currentSchema?.map.component.supplemened + extraLength,

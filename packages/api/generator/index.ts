@@ -8,10 +8,10 @@ import { getType } from './getType'
 const __dirname = import.meta.dirname
 const prisma = new PrismaClient()
 
-const basePath = path.resolve(__dirname, '../../library')
+const basePath = path.resolve(__dirname, '../../cms/library')
 
 const project = new Project({
-    tsConfigFilePath: `${basePath}/tsconfig.json`,
+    tsConfigFilePath: `${path.resolve(__dirname, '../../cms')}/tsconfig.json`,
 })
 
 const start = async () => {
@@ -21,6 +21,8 @@ const start = async () => {
     project.addSourceFilesAtPaths(`${basePath}/src/**/*.tsx`)
 
     const files = fs.readdirSync(`${basePath}/src`)
+
+    // const files = ['Carousel']
 
     const sourceDefenitionFileText = `
       ${files
@@ -34,8 +36,6 @@ const start = async () => {
       type LibraryType = typeof Library
     `
 
-    console.log(sourceDefenitionFileText)
-
     const sourceFile = project.createSourceFile(
         `./generated.ts`,
         sourceDefenitionFileText,
@@ -43,6 +43,7 @@ const start = async () => {
             overwrite: true,
         }
     )
+    sourceFile.save()
 
     const typeAlias = sourceFile.getTypeAliasOrThrow('LibraryType')
     const type = typeAlias.getType()
@@ -58,6 +59,8 @@ const start = async () => {
         }
     })
 
+    console.log(types)
+
     const promises: Promise<any>[] = []
 
     types.forEach(({ name, type }) => {
@@ -71,8 +74,6 @@ const start = async () => {
                     },
                 })
                 .then(async (frame) => {
-                    console.log(frame)
-
                     if (frame) {
                         await prisma.frame.update({
                             where: {
