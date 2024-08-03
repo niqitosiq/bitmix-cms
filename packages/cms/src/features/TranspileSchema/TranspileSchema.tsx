@@ -19,6 +19,7 @@ export const TranspileSchema = ({ schema, children }: Props) => {
     const [transpiled, setTranspiled] = useState<Transpiled | null>(null)
     useEffect(() => {
         const result = transpile(schema)
+
         if (!result.erorrs?.length) setTranspiled(result)
     }, [schema])
 

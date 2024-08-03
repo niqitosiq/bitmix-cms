@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createSchema, deleteSchema, getSchema } from './api'
+import {
+    addVisiblePropToSchema,
+    createSchema,
+    deleteSchema,
+    deleteVisiblePropFromSchema,
+    getSchema,
+} from './api'
 import { Schema } from './types'
 import { Page } from '@entities/Page'
 
@@ -56,4 +62,36 @@ const useDeleteSchema = () => {
     })
 }
 
-export { useGetSchema, useCreateSchema, useDeleteSchema }
+const useAddVisiblePropToSchema = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: addVisiblePropToSchema,
+        onSuccess: (_, { schemaAlias }) => {
+            queryClient.invalidateQueries({
+                queryKey: ['schema', { alias: schemaAlias }],
+            })
+        },
+    })
+}
+
+const useDeleteVisiblePropFromSchema = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: deleteVisiblePropFromSchema,
+        onSuccess: (_, { schemaAlias }) => {
+            queryClient.invalidateQueries({
+                queryKey: ['schema', { alias: schemaAlias }],
+            })
+        },
+    })
+}
+
+export {
+    useGetSchema,
+    useCreateSchema,
+    useDeleteSchema,
+    useAddVisiblePropToSchema,
+    useDeleteVisiblePropFromSchema,
+}

@@ -78,6 +78,7 @@ export class SchemaController {
                         include: {
                             ChildrenSchema: true,
                             Frame: true,
+                            visibleProps: true,
                         },
                     },
                 },
@@ -103,6 +104,7 @@ export class SchemaController {
                     },
                     Frame: true,
                     ChildrenSchema: true,
+                    visibleProps: true,
                 },
             })
 
@@ -123,6 +125,7 @@ export class SchemaController {
                         },
                         Frame: true,
                         ChildrenSchema: true,
+                        visibleProps: true,
                     },
                 })
 
@@ -229,6 +232,65 @@ export class SchemaController {
             } else {
                 res.status(404).json({ message: 'Prop not found' })
             }
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async addVisiblePropToSchema(req: Request, res: Response) {
+        try {
+            const { schemaAlias } = req.params as unknown as {
+                schemaAlias: string
+            }
+            const { visiblePropName } = req.body as { visiblePropName: string }
+
+            const existing = await prisma.visibleProp.findFirst({
+                where: {
+                    Schema: { alias: schemaAlias },
+                    name: visiblePropName,
+                },
+            })
+
+            if (existing) {
+                res.status(400).json({ message: 'Prop already exists' })
+                return
+            }
+
+            const prop = await prisma.visibleProp.create({
+                data: {
+                    name: visiblePropName,
+                    Schema: {
+                        connect: { alias: schemaAlias },
+                    },
+                },
+            })
+
+            res.status(201).json(prop)
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async deleteVisiblePropFromSchema(req: Request, res: Response) {
+        try {
+            const { visiblePropName } = req.params as unknown as {
+                visiblePropName: string
+            }
+
+            const { schemaAlias } = req.params as unknown as {
+                schemaAlias: string
+            }
+
+            await prisma.visibleProp.deleteMany({
+                where: {
+                    name: visiblePropName,
+                    Schema: { alias: schemaAlias },
+                },
+            })
+
+            res.status(204).end()
         } catch (error) {
             console.error(error)
             res.status(500).json({ message: 'Internal server error' })

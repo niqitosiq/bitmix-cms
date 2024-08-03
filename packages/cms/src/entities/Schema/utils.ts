@@ -8,6 +8,7 @@ export const getCleanSchema = (schema: Schema): CleanSchema => {
         parentSchemaId: schema['parentSchemaId'],
         updatedAt: schema['updatedAt'],
         Frame: schema['Frame'],
+        visibleProps: schema['visibleProps'],
     }
 }
 

@@ -1,6 +1,7 @@
 
       import Button from '/Users/niqitosiq/bitmix-cms/packages/cms/library/src/Button';
 	import Carousel from '/Users/niqitosiq/bitmix-cms/packages/cms/library/src/Carousel';
+	import CarouselContent from '/Users/niqitosiq/bitmix-cms/packages/cms/library/src/CarouselContent';
 	import CarouselItem from '/Users/niqitosiq/bitmix-cms/packages/cms/library/src/CarouselItem';
 	import Page from '/Users/niqitosiq/bitmix-cms/packages/cms/library/src/Page';
 	import Paragraph from '/Users/niqitosiq/bitmix-cms/packages/cms/library/src/Paragraph';
@@ -9,6 +10,7 @@
       const Library = {
         Button,
 	Carousel,
+	CarouselContent,
 	CarouselItem,
 	Page,
 	Paragraph,

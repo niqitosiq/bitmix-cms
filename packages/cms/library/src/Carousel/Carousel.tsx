@@ -17,6 +17,7 @@ type CarouselProps = {
     // plugins?: CarouselPlugin
     orientation?: 'horizontal' | 'vertical'
     setApi?: (api: CarouselApi) => void
+    children: (props: {}) => React.ReactNode
 }
 
 type CarouselContextProps = {
@@ -26,7 +27,7 @@ type CarouselContextProps = {
     scrollNext: () => void
     canScrollPrev: boolean
     canScrollNext: boolean
-} & CarouselProps
+} & Omit<CarouselProps, 'children'>
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null)
 
@@ -51,7 +52,7 @@ const Carousel = React.forwardRef<
             setApi,
             // plugins,
             className,
-            children,
+            children = () => null,
             ...props
         },
         ref
@@ -141,7 +142,7 @@ const Carousel = React.forwardRef<
                     aria-roledescription="carousel"
                     {...props}
                 >
-                    {children}
+                    {children({})}
                 </div>
             </CarouselContext.Provider>
         )
@@ -149,10 +150,13 @@ const Carousel = React.forwardRef<
 )
 Carousel.displayName = 'Carousel'
 
+type CarouselContentProps = {
+    children: ({}) => React.ReactNode
+}
 const CarouselContent = React.forwardRef<
     HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+    React.HTMLAttributes<HTMLDivElement> & CarouselContentProps
+>(({ className, children = () => null, ...props }, ref) => {
     const { carouselRef, orientation } = useCarousel()
 
     return (
@@ -165,16 +169,21 @@ const CarouselContent = React.forwardRef<
                     className
                 )}
                 {...props}
-            />
+            >
+                {children({})}
+            </div>
         </div>
     )
 })
 CarouselContent.displayName = 'CarouselContent'
 
+type CarouselItemProps = {
+    children: ({}) => React.ReactNode
+}
 const CarouselItem = React.forwardRef<
     HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
+    React.HTMLAttributes<HTMLDivElement> & CarouselItemProps
+>(({ className, children = () => null, ...props }, ref) => {
     const { orientation } = useCarousel()
 
     return (
@@ -188,7 +197,9 @@ const CarouselItem = React.forwardRef<
                 className
             )}
             {...props}
-        />
+        >
+            {children({})}
+        </div>
     )
 })
 CarouselItem.displayName = 'CarouselItem'

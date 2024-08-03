@@ -1,1 +1,3 @@
-export { CarouselItem as default } from '../Carousel/Carousel'
+import { CarouselItem } from '../Carousel/Carousel'
+
+export default CarouselItem

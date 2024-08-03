@@ -169,7 +169,7 @@ export const createTypeScriptSandbox = async (
     )
 
     let created = false
-    const ata = setupTypeAcquisition({
+    const pullDependencies = setupTypeAcquisition({
         projectName: 'TypeScript Playground',
         typescript: ts,
         logger: console,
@@ -194,7 +194,7 @@ export const createTypeScriptSandbox = async (
     })
 
     fsMap.set('dependencies.ts', `// deps`)
-    await ata('import React from "@types/react";')
+    await pullDependencies('import React from "@types/react";')
     created = true
 
     fsMap.set('input.tsx', `// main TypeScript file content`)
@@ -208,5 +208,5 @@ export const createTypeScriptSandbox = async (
         compilerOptions
     )
 
-    return { env, ata }
+    return { env, pullDependencies }
 }

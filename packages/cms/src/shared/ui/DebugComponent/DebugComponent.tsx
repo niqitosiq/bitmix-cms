@@ -14,7 +14,7 @@ type Props = {
 export const DebugComponent = ({ id, children }: Props) => {
     const { data: schema } = useGetSchema(id)
     const { mutate } = useUpdatePropInSchema(id)
-    console.log(schema)
+
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             <FrameContext.Provider
@@ -23,7 +23,7 @@ export const DebugComponent = ({ id, children }: Props) => {
                     updateProp: mutate,
                 }}
             >
-                <div>{children}</div>
+                {children}
             </FrameContext.Provider>
         </ErrorBoundary>
     )

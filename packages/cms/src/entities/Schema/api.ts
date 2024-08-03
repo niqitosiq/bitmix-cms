@@ -17,4 +17,36 @@ const deleteSchema = async (schemaId: Schema['id']): Promise<void> => {
     return res.data
 }
 
-export { getSchema, createSchema, deleteSchema }
+const addVisiblePropToSchema = async ({
+    schemaAlias,
+    visiblePropName,
+}: {
+    schemaAlias: Schema['alias']
+    visiblePropName: string
+}): Promise<void> => {
+    const res = await api.put(`/schemas/${schemaAlias}/visible-props`, {
+        visiblePropName,
+    })
+    return res.data
+}
+
+const deleteVisiblePropFromSchema = async ({
+    schemaAlias,
+    visiblePropName,
+}: {
+    schemaAlias: Schema['alias']
+    visiblePropName: string
+}): Promise<void> => {
+    const res = await api.delete(
+        `/schemas/${schemaAlias}/visible-props/${visiblePropName}`
+    )
+    return res.data
+}
+
+export {
+    getSchema,
+    createSchema,
+    deleteSchema,
+    addVisiblePropToSchema,
+    deleteVisiblePropFromSchema,
+}

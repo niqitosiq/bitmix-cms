@@ -15,4 +15,13 @@ router.delete(
 )
 router.get('/props/:propId', schemaController.getPropById)
 
+router.put(
+    '/schemas/:schemaAlias/visible-props',
+    schemaController.addVisiblePropToSchema
+)
+router.delete(
+    '/schemas/:schemaAlias/visible-props/:visiblePropName',
+    schemaController.deleteVisiblePropFromSchema
+)
+
 export { router as schemaRouter }

@@ -8,10 +8,10 @@ import { QuickInfo } from 'typescript'
 
 export type Props = {
     schema: CleanSchema
-    children: (arg: { args?: Arg[] | null }) => React.ReactNode
+    children: (arg: { args?: ChildrenArg[] | null }) => React.ReactNode
 }
 
-type Arg = {
+export type ChildrenArg = {
     name: string
     type: string
 }
@@ -28,7 +28,7 @@ const getTsQuickInfoMeaningful = (displayParts: QuickInfo['displayParts']) => {
 
     const deepType = displayParts.slice(deepTypeStartsAt)
 
-    const fieldsAndItTypes: Arg[] = []
+    const fieldsAndItTypes: ChildrenArg[] = []
 
     deepType.forEach((part, index) => {
         if (part.kind === 'punctuation' && part.text === ':') {
@@ -51,7 +51,7 @@ const getTsQuickInfoMeaningful = (displayParts: QuickInfo['displayParts']) => {
 }
 
 export const FramePropsDefenition = ({ schema, children }: Props) => {
-    const [args, setArgs] = useState<Arg[] | null>(null)
+    const [args, setArgs] = useState<ChildrenArg[] | null>(null)
 
     const { manipulatorRef, extraLength, map, full, isReady } =
         useTSManipulator()
@@ -75,8 +75,6 @@ export const FramePropsDefenition = ({ schema, children }: Props) => {
                     extraLength -
                     2
             )
-
-        console.log(currentSchema.id, childrenArgs)
 
         if (!childrenArgs) return
 

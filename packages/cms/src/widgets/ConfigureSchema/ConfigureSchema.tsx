@@ -11,6 +11,7 @@ import { ConnectSchemaNodes } from '@features/ConnectSchemaNodes'
 import { DeleteSchema } from '@features/DeleteSchema/DeleteSchema'
 import { GetAvailablePropsForFrame } from '@features/GetAvailablePropsForFrame'
 import { TsProp } from '@features/GetAvailablePropsForFrame/GetAvailablePropsForFrame'
+import { ManageSchemaVisibleProps } from '@features/ManageSchemaVisibleProps'
 import { TranspileSchema } from '@features/TranspileSchema'
 import { UpdatePropViaMockValue } from '@features/UpdatePropViaMockValue'
 import { UpdateTSExecutable } from '@features/UpdateTSExecutable/UpdateTSExecutable'
@@ -58,33 +59,45 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
 
                     <GetAvailablePropsForFrame schema={data}>
                         {({ props }) => (
-                            <Flex justify={'space-around'}>
-                                {props?.map((prop: TsProp | Prop) => {
-                                    const value = data.props.find(
-                                        (p) => p.name === prop.name
-                                    )?.propValue
+                            <Flex justify={'space-around'} align={'center'}>
+                                <ManageSchemaVisibleProps
+                                    schema={data}
+                                    args={props}
+                                >
+                                    {({ selectedArgs }) =>
+                                        selectedArgs?.map(
+                                            (prop: TsProp | Prop) => {
+                                                const value = data.props.find(
+                                                    (p) => p.name === prop.name
+                                                )?.propValue
 
-                                    return (
-                                        <PropIn
-                                            key={prop.name}
-                                            name={prop.name}
-                                            type={prop.type}
-                                            schemaAlias={data.alias}
-                                            value={value}
-                                            onConnect={(params) =>
-                                                onConnect(params, prop.type)
+                                                return (
+                                                    <PropIn
+                                                        key={prop.name}
+                                                        name={prop.name}
+                                                        type={prop.type}
+                                                        schemaAlias={data.alias}
+                                                        value={value}
+                                                        onConnect={(params) =>
+                                                            onConnect(
+                                                                params,
+                                                                prop.type
+                                                            )
+                                                        }
+                                                        isConnectable
+                                                    >
+                                                        <UpdatePropViaMockValue
+                                                            name={prop.name}
+                                                            type={prop.type}
+                                                            schemaId={data.id}
+                                                            value={value}
+                                                        />
+                                                    </PropIn>
+                                                )
                                             }
-                                            isConnectable
-                                        >
-                                            <UpdatePropViaMockValue
-                                                name={prop.name}
-                                                type={prop.type}
-                                                schemaId={data.id}
-                                                value={value}
-                                            />
-                                        </PropIn>
-                                    )
-                                })}
+                                        )
+                                    }
+                                </ManageSchemaVisibleProps>
                             </Flex>
                         )}
                     </GetAvailablePropsForFrame>

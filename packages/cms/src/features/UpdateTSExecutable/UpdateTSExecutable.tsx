@@ -24,7 +24,7 @@ export const UpdateTSExecutable = ({ code, map, schema, children }: Props) => {
         setMap,
         setFull,
         full,
-        ataRef,
+        pullDependenciesRef,
     } = useTSManipulator()
 
     const handler = async () => {
@@ -61,22 +61,13 @@ export const UpdateTSExecutable = ({ code, map, schema, children }: Props) => {
         const fullDefenition = `${allBefore}${code}}`
 
         if (manipulatorRef?.current && code && isReady) {
-            await ataRef?.current(fullDefenition)
-            console.log('i just started to do all another!!')
+            if (pullDependenciesRef?.current)
+                await pullDependenciesRef?.current(fullDefenition)
 
             manipulatorRef?.current.updateFile('input.tsx', fullDefenition)
             if (setExtraLength) setExtraLength(allBefore.length - 2)
             if (setMap && map) setMap(map)
             if (setFull) setFull(fullDefenition)
-
-            console.log(
-                manipulatorRef.current.languageService.getSyntacticDiagnostics(
-                    'input.tsx'
-                ),
-                manipulatorRef.current.languageService.getSemanticDiagnostics(
-                    'input.tsx'
-                )
-            )
         }
     }
     useEffect(() => {

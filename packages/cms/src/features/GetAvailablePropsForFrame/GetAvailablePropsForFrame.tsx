@@ -8,10 +8,10 @@ import { useEffect, useState } from 'react'
 
 type Props = {
     schema: CleanSchema
-    children: (arg: { props?: TsProp[] }) => React.ReactNode
+    children: (arg: { props: TsProp[] }) => React.ReactNode
 }
 
-const IGNORED_PROPS = ['key', 'children']
+const IGNORED_PROPS = ['children']
 // todo move to entity
 export type TsProp = {
     name: string | undefined

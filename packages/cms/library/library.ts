@@ -6,5 +6,6 @@ export const library = {
     QueryParser: lazy(() => import('./src/QueryParser')),
     Carousel: lazy(() => import('./src/Carousel')),
     CarouselItem: lazy(() => import('./src/CarouselItem')),
+    CarouselContent: lazy(() => import('./src/CarouselContent')),
     Button: lazy(() => import('./src/Button')),
 }
