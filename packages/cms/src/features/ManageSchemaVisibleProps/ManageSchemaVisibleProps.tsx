@@ -37,6 +37,7 @@ export const ManageSchemaVisibleProps = ({ schema, children, args }: Props) => {
                     selected
                     {schema.visibleProps.map((prop) => (
                         <Button
+                            key={prop.name}
                             onClick={() =>
                                 deleteVisibleProp({
                                     schemaAlias: schema.alias,
@@ -50,6 +51,7 @@ export const ManageSchemaVisibleProps = ({ schema, children, args }: Props) => {
                     to add:
                     {args.map((arg) => (
                         <Button
+                            key={arg.name}
                             onClick={() =>
                                 addVisibleProp({
                                     schemaAlias: schema.alias,

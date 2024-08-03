@@ -39,5 +39,9 @@ export const RenderedSchema = ({ id }: Props) => {
 
     if (!transpiled) return
 
-    return <>{renderedRef.current}</>
+    return (
+        <div className="p-4 bg-slate-600 h-full">
+            <div className="bg-white">{renderedRef.current}</div>
+        </div>
+    )
 }

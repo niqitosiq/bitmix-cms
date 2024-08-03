@@ -1,36 +1,46 @@
 import { PageInline } from '@entities/Page'
 import { useGetPage } from '@entities/Page/hooks'
-import { useGetSchema } from '@entities/Schema/hooks'
 import { Loading } from '@shared/ui/Loading'
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { ConfigureSchema } from '@widgets/ConfigureSchema'
 import { RenderedSchema } from '@widgets/RenderedSchema'
+import {
+    getPanelElement,
+    getPanelGroupElement,
+    getResizeHandleElement,
+    Panel,
+    PanelGroup,
+    PanelResizeHandle,
+} from 'react-resizable-panels'
 
 const PageEditor = () => {
     const { pageId } = Route.useParams()
 
     const { data: page, isLoading: pageLoading } = useGetPage(pageId)
-    const { data: schema, isLoading: schemaLoading } = useGetSchema(
-        page?.Schema.id
-    )
-
-    if (pageLoading || schemaLoading) {
+    if (pageLoading) {
         return <Loading />
     }
 
     return (
-        <div>
-            {page && (
-                <PageInline
-                    id={parseInt(pageId)}
-                    name={page.name}
-                    url={page.url}
-                />
-            )}
+        <main>
+            <PanelGroup direction="horizontal" id="group">
+                <Panel id="left-panel">
+                    {page && (
+                        <PageInline
+                            id={pageId}
+                            name={page.name}
+                            url={page.url}
+                        />
+                    )}
 
-            <RenderedSchema id={page?.Schema.id!} />
-            <ConfigureSchema id={page?.Schema.id!} />
-        </div>
+                    <ConfigureSchema id={page?.Schema.id!} />
+                </Panel>
+                <PanelResizeHandle id="resize-handle" />
+                <Panel id="right-panel">
+                    <RenderedSchema id={page?.Schema.id!} />
+                </Panel>
+            </PanelGroup>
+        </main>
     )
 }
 
