@@ -76,17 +76,27 @@ model Schema {
   ChildrenSchema       Schema[]    @relation("ChildrenSchema")
 }
 
+model PinnedProp {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  frameId   String
+  Frame     Frame?   @relation(fields: [frameId], references: [id])
+}
+
 model Frame {
-  id            String    @id @default(uuid())
-  name          String    @unique
+  id            String       @id @default(uuid())
+  name          String       @unique
   description   String?
   icon          String?
-  category      Category? @relation(fields: [categoryId], references: [id])
+  category      Category?    @relation(fields: [categoryId], references: [id])
   type          String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   categoryId    String?
-  isBase        Boolean   @default(false)
+  isBase        Boolean      @default(false)
   code          String?
-  ParentSchemas Schema[]  @relation("Frame")
+  ParentSchemas Schema[]     @relation("Frame")
+  pinnedProps   PinnedProp[]
 }

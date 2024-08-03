@@ -64,7 +64,7 @@ const start = async () => {
     const promises: Promise<any>[] = []
 
     types.forEach(({ name, type }) => {
-        console.log(`${name}: ${type}`)
+        // console.log(`${name}: ${type}`)
 
         promises.push(
             prisma.frame

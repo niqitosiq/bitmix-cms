@@ -26,7 +26,7 @@ export function getDefaultSandboxCompilerOptions(
     const settings: CompilerOptions = {
         strict: true,
 
-        noImplicitAny: true,
+        noImplicitAny: false,
         strictNullChecks: !useJavaScript,
         strictFunctionTypes: true,
         strictPropertyInitialization: true,
@@ -36,11 +36,11 @@ export function getDefaultSandboxCompilerOptions(
         noUncheckedIndexedAccess: false,
 
         // 3.7 off, 3.8 on I think
-        useDefineForClassFields: false,
+        useDefineForClassFields: true,
 
         alwaysStrict: true,
-        allowUnreachableCode: false,
-        allowUnusedLabels: false,
+        allowUnreachableCode: true,
+        allowUnusedLabels: true,
 
         downlevelIteration: false,
         noEmitHelpers: false,
@@ -49,6 +49,7 @@ export function getDefaultSandboxCompilerOptions(
         noUnusedLocals: false,
         noUnusedParameters: false,
 
+        allowSyntheticDefaultImports: true,
         esModuleInterop: true,
         preserveConstEnums: false,
         removeComments: false,
@@ -58,7 +59,7 @@ export function getDefaultSandboxCompilerOptions(
         allowJs: useJavaScript,
         declaration: true,
 
-        importHelpers: false,
+        importHelpers: true,
 
         experimentalDecorators: true,
         emitDecoratorMetadata: true,
@@ -167,13 +168,24 @@ export const createTypeScriptSandbox = async (
         lzstring
     )
 
+    let created = false
     const ata = setupTypeAcquisition({
         projectName: 'TypeScript Playground',
         typescript: ts,
         logger: console,
         delegate: {
             receivedFile: (code, path) => {
-                if (path.includes('.d.ts')) fsMap.set('file://' + path, code)
+                const isSupported =
+                    path.includes('.d.ts') ||
+                    path.includes('.ts') ||
+                    path.includes('.tsx') ||
+                    path.includes('.cts') ||
+                    path.includes('.mts')
+
+                if (isSupported)
+                    if (created) {
+                        env.createFile(path, code)
+                    } else fsMap.set(path, code)
             },
             progress: () => {},
             started: () => {},
@@ -181,7 +193,9 @@ export const createTypeScriptSandbox = async (
         },
     })
 
+    fsMap.set('dependencies.ts', `// deps`)
     await ata('import React from "@types/react";')
+    created = true
 
     fsMap.set('input.tsx', `// main TypeScript file content`)
 
@@ -194,5 +208,5 @@ export const createTypeScriptSandbox = async (
         compilerOptions
     )
 
-    return env
+    return { env, ata }
 }

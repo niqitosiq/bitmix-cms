@@ -24,9 +24,10 @@ export const UpdateTSExecutable = ({ code, map, schema, children }: Props) => {
         setMap,
         setFull,
         full,
+        ataRef,
     } = useTSManipulator()
 
-    useEffect(() => {
+    const handler = async () => {
         const uniqueTypes = new Map()
 
         if (schema) {
@@ -40,13 +41,13 @@ export const UpdateTSExecutable = ({ code, map, schema, children }: Props) => {
         const framesTypeDefenition = `
             type Library = {
                 ${Array.from(uniqueTypes.entries()).map(
-                    ([name, type]) => `${name}: ${type};`
+                    ([name, type]) => `${name}: ${type}`
                 )}
             }
         `
 
         const additionalDefenition = `
-            type DebugComponent = ({ id }: { id: string|undefined }) => React.ReactNode
+            type DebugComponent = (props: { id: string | undefined, children: React.ReactNode }) => React.ReactNode;
             const DebugComponent: DebugComponent = (window as any).DebugComponent;
             const library: Library = (window as any).library;
         `
@@ -60,11 +61,26 @@ export const UpdateTSExecutable = ({ code, map, schema, children }: Props) => {
         const fullDefenition = `${allBefore}${code}}`
 
         if (manipulatorRef?.current && code && isReady) {
+            await ataRef?.current(fullDefenition)
+            console.log('i just started to do all another!!')
+
             manipulatorRef?.current.updateFile('input.tsx', fullDefenition)
             if (setExtraLength) setExtraLength(allBefore.length - 2)
             if (setMap && map) setMap(map)
             if (setFull) setFull(fullDefenition)
+
+            console.log(
+                manipulatorRef.current.languageService.getSyntacticDiagnostics(
+                    'input.tsx'
+                ),
+                manipulatorRef.current.languageService.getSemanticDiagnostics(
+                    'input.tsx'
+                )
+            )
         }
+    }
+    useEffect(() => {
+        handler()
     }, [isReady, code])
 
     return (

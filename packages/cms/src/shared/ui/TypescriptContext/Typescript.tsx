@@ -33,15 +33,15 @@ export const TypescriptProvider = ({ children }: Props) => {
     const [extraLength, setExtraLength] = useState(0)
     const [map, setMap] = useState<Transpiled['map'] | null>(null)
     const [full, setFull] = useState<string>('')
+    const ataRef = useRef<any>(null)
     const manipulatorRef = useRef<Manipulator | null>(null)
 
     useEffect(() => {
-        createTypeScriptSandbox({}, ts).then(
-            (env: VirtualTypeScriptEnvironment) => {
-                manipulatorRef.current = env
-                setTimeout(() => setIsReady(true), 3000)
-            }
-        )
+        createTypeScriptSandbox({}, ts).then(({ env, ata }) => {
+            ataRef.current = ata
+            manipulatorRef.current = env
+            setTimeout(() => setIsReady(true), 3000)
+        })
     }, [])
 
     return (
@@ -55,6 +55,7 @@ export const TypescriptProvider = ({ children }: Props) => {
                 setMap,
                 full,
                 setFull,
+                ataRef,
             }}
         >
             {children}

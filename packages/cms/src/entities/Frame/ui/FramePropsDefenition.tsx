@@ -76,6 +76,8 @@ export const FramePropsDefenition = ({ schema, children }: Props) => {
                     2
             )
 
+        console.log(currentSchema.id, childrenArgs)
+
         if (!childrenArgs) return
 
         const args = getTsQuickInfoMeaningful(childrenArgs.displayParts)

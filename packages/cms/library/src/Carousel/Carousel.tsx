@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons'
 import useEmblaCarousel, {
@@ -16,10 +14,9 @@ type CarouselPlugin = UseCarouselParameters[1]
 
 type CarouselProps = {
     opts?: CarouselOptions
-    plugins?: CarouselPlugin
+    // plugins?: CarouselPlugin
     orientation?: 'horizontal' | 'vertical'
     setApi?: (api: CarouselApi) => void
-    children: React.ReactNode
 }
 
 type CarouselContextProps = {
@@ -52,7 +49,7 @@ const Carousel = React.forwardRef<
             orientation = 'horizontal',
             opts,
             setApi,
-            plugins,
+            // plugins,
             className,
             children,
             ...props
@@ -63,8 +60,8 @@ const Carousel = React.forwardRef<
             {
                 ...opts,
                 axis: orientation === 'horizontal' ? 'x' : 'y',
-            },
-            plugins
+            }
+            // plugins
         )
         const [canScrollPrev, setCanScrollPrev] = React.useState(false)
         const [canScrollNext, setCanScrollNext] = React.useState(false)
