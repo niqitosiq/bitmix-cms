@@ -69,7 +69,7 @@ const useAddVisiblePropToSchema = () => {
         mutationFn: addVisiblePropToSchema,
         onSuccess: (_, { schemaAlias }) => {
             queryClient.invalidateQueries({
-                queryKey: ['schema', { alias: schemaAlias }],
+                queryKey: ['schema'],
             })
         },
     })
@@ -82,7 +82,7 @@ const useDeleteVisiblePropFromSchema = () => {
         mutationFn: deleteVisiblePropFromSchema,
         onSuccess: (_, { schemaAlias }) => {
             queryClient.invalidateQueries({
-                queryKey: ['schema', { alias: schemaAlias }],
+                queryKey: ['schema'],
             })
         },
     })

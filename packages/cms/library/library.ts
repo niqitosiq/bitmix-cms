@@ -8,4 +8,5 @@ export const library = {
     CarouselItem: lazy(() => import('./src/CarouselItem')),
     CarouselContent: lazy(() => import('./src/CarouselContent')),
     Button: lazy(() => import('./src/Button')),
+    Image: lazy(() => import('./src/Image')),
 }
