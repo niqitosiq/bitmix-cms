@@ -4,7 +4,7 @@ import { Loading } from '@shared/ui/Loading'
 import { useTSManipulator } from '@shared/ui/TypescriptContext/Typescript'
 import { useUpdateNodeInternals } from '@xyflow/react'
 import { useEffect, useState } from 'react'
-import { QuickInfo } from 'typescript'
+import ts, { QuickInfo } from 'typescript'
 
 export type Props = {
     schema: CleanSchema
@@ -68,21 +68,65 @@ export const FramePropsDefenition = ({ schema, children }: Props) => {
         )
             return
 
-        const childrenArgs =
-            manipulatorRef?.current?.languageService.getQuickInfoAtPosition(
-                'input.tsx',
-                currentSchema?.map.component.children_params[1]! +
-                    extraLength -
-                    2
-            )
-
-        if (!childrenArgs) return
-
-        const args = getTsQuickInfoMeaningful(childrenArgs.displayParts)
-
-        setArgs(args)
-
         updateNodeInternals(schema.alias)
+
+        const sourceFile = manipulatorRef?.current?.languageService
+            .getProgram()
+            ?.getSourceFile('input.tsx')
+        const checker = manipulatorRef?.current?.languageService
+            .getProgram()
+            ?.getTypeChecker()
+
+        function findNodeAtPosition(
+            sourceFile: ts.SourceFile,
+            position: number
+        ): ts.Node | undefined {
+            function find(node: ts.Node): ts.Node | undefined {
+                if (position >= node.getStart() && position < node.getEnd()) {
+                    return ts.forEachChild(node, find) || node
+                }
+                return undefined
+            }
+            return find(sourceFile)
+        }
+
+        const node = findNodeAtPosition(
+            sourceFile!,
+            currentSchema?.map.component.children_params[1]! + extraLength - 2
+        )
+        function getResolvedType(type: ts.Type, checker: ts.TypeChecker) {
+            if (!type.symbol?.declarations) return null
+
+            const symbol = checker.getSymbolAtLocation(
+                type.symbol.declarations[0]
+            )
+            if (symbol?.declarations) {
+                const typeOfSymbol = checker.getTypeOfSymbolAtLocation(
+                    symbol,
+                    symbol.declarations[0]
+                )
+                return typeOfSymbol
+            }
+            return type
+        }
+
+        if (node && checker) {
+            const type = checker.getTypeAtLocation(node)
+
+            const resolvedType = getResolvedType(type, checker)
+            setArgs(
+                resolvedType?.getProperties().map((prop) => {
+                    const propType = checker.getTypeOfSymbolAtLocation(
+                        prop,
+                        node
+                    )
+                    return {
+                        name: prop.getName(),
+                        type: checker.typeToString(propType),
+                    }
+                }) || null
+            )
+        }
     }
 
     useEffect(() => {

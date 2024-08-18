@@ -1,3 +1,3 @@
-import { Frame } from '.prisma/client'
+import { Frame, CustomFrame } from '.prisma/client'
 
-export type { Frame }
+export type { Frame, CustomFrame }

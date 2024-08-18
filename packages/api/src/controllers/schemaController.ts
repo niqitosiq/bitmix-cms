@@ -116,7 +116,7 @@ export class SchemaController {
             // find all childrens for schema and include it recursively
             const findChildren = async (schema: Schema) => {
                 const children = await prisma.schema.findMany({
-                    where: { parentSchemaId: schema.id },
+                    where: { ParentSchema: { some: { id: schema.id } } },
                     include: {
                         props: {
                             include: {
@@ -291,6 +291,50 @@ export class SchemaController {
             })
 
             res.status(204).end()
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async createCustomFrame(req: Request, res: Response) {
+        try {
+            const { name, description, id } = req.body as {
+                name: string
+                description: string
+                id: string
+            }
+
+            const frame = await prisma.customFrame.create({
+                data: {
+                    name,
+                    description,
+                    id,
+                    Schema: {
+                        create: {
+                            alias: `Frame${getUniqueWordId()}`,
+                            Frame: {
+                                connect: {
+                                    name: 'Frame',
+                                },
+                            },
+                        },
+                    },
+                },
+            })
+
+            res.status(201).json(frame)
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async getCustomFrames(req: Request, res: Response) {
+        try {
+            const frames = await prisma.customFrame.findMany()
+
+            res.status(200).json(frames)
         } catch (error) {
             console.error(error)
             res.status(500).json({ message: 'Internal server error' })

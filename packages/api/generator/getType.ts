@@ -69,10 +69,23 @@ export const getType = (type: Type, currentLevel = 0) => {
                     .join(', ')
 
                 const returnType = signature.getReturnType()
+
+                const constr = signature
+                    .getTypeParameters()[0]
+                    ?.getConstraint()
+                    ?.getText()
+                const typeParam = signature.getTypeParameters()[0]?.getText()
+
+                const funcDef = typeParam
+                    ? constr
+                        ? `<${typeParam} extends ${constr}>`
+                        : `<${typeParam}>`
+                    : ''
+                console.log(funcDef)
                 if (returnType.getText().includes('React.')) {
-                    return `(${params}) => ${returnType.getText()}`
+                    return `${funcDef}(${params}) => ${returnType.getText()}`
                 }
-                return `((${params}) => ${getType(returnType, currentLevel + 1)})`
+                return `(${funcDef}(${params}) => ${getType(returnType, currentLevel + 1)})`
             })
             .join(', ')
     }

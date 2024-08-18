@@ -17,6 +17,11 @@ export class FrameController {
     async getFrameById(req: Request, res: Response) {
         const { id } = req.params
         try {
+            const customFrame = await prisma.customFrame.findUnique({
+                where: { id },
+            })
+            if (customFrame) return res.json(customFrame)
+
             const frame = await prisma.frame.findUnique({
                 where: { id },
             })

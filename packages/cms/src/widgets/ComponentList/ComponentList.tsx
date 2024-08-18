@@ -1,13 +1,26 @@
-import { useGetFrames } from '@entities/Frame'
+import { useGetCustomFrames, useGetFrames } from '@entities/Frame'
 import { FrameInline } from '@entities/Frame/ui/FrameInline'
+import { CreateCustomFrame } from '@features/CreateCustomFrame'
+import { Link } from '@tanstack/react-router'
 
 export const ComponentList = () => {
-    const { data } = useGetFrames()
+    const { data: frames } = useGetFrames()
+    const { data: customFrames } = useGetCustomFrames()
 
     return (
         <div>
             Components:
-            {data?.map((f) => <FrameInline frame={f} key={f.id} />)}
+            {frames?.map((f) => <FrameInline frame={f} key={f.id} />)}
+            {customFrames?.map((f) => (
+                <Link
+                    key={f.id}
+                    to="/frames/$frameId/edit"
+                    params={{ frameId: f.id }}
+                >
+                    <FrameInline frame={f} />
+                </Link>
+            ))}
+            <CreateCustomFrame />
         </div>
     )
 }

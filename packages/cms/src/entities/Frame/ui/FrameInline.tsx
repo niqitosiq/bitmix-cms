@@ -1,8 +1,8 @@
 import { Text } from '@mantine/core'
-import { Frame } from '../types'
+import { CustomFrame, Frame } from '../types'
 
 type Props = {
-    frame: Frame
+    frame: Frame | CustomFrame
 }
 
 export const FrameInline = ({ frame }: Props) => {
