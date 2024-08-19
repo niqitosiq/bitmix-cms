@@ -1,6 +1,7 @@
 import { api } from '@shared/api'
 import { Schema } from './types'
 import type { SchemaCreationBody } from '@api/src/controllers/schemaController'
+import { Prop } from '@entities/Prop'
 
 const getSchema = async (schemaId: Schema['id']): Promise<Schema> => {
     const res = await api.get(`/schemas/${schemaId}`)
@@ -43,10 +44,43 @@ const deleteVisiblePropFromSchema = async ({
     return res.data
 }
 
+const pinPropToCustomFrame = async ({
+    schemaId,
+    propName,
+    propType,
+}: {
+    schemaId: Schema['id']
+    propName?: Prop['name']
+    propType?: Prop['type']
+}): Promise<void> => {
+    const res = await api.post('/schemas/pinPropToCustomFrame', {
+        schemaId,
+        propName,
+        propType,
+    })
+    return res.data
+}
+
+const attachSchemaToSchema = async ({
+    parentSchemaId,
+    childSchemaId,
+}: {
+    parentSchemaId: Schema['id']
+    childSchemaId: Schema['id']
+}): Promise<void> => {
+    const res = await api.post('/schemas/attachSchemaToSchema', {
+        parentSchemaId,
+        childSchemaId,
+    })
+    return res.data
+}
+
 export {
     getSchema,
     createSchema,
     deleteSchema,
     addVisiblePropToSchema,
     deleteVisiblePropFromSchema,
+    pinPropToCustomFrame,
+    attachSchemaToSchema,
 }

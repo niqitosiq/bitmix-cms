@@ -7,8 +7,16 @@ const schemaController = new SchemaController()
 router.get('/schemas', schemaController.getAllSchemas)
 router.get('/schemas/:id', schemaController.getSchemaById)
 router.post('/schemas', schemaController.createSchema)
+router.post(
+    '/schemas/pinPropToCustomFrame',
+    schemaController.pinPropToCustomFrame
+)
 router.delete('/schemas/:id', schemaController.deleteSchema)
 router.put('/schemas/:schemaAlias/props', schemaController.updatePropToSchema)
+router.post(
+    '/schemas/attachSchemaToSchema',
+    schemaController.attachSchemaToSchema
+)
 router.delete(
     '/schemas/:schemaAlias/props/:propId',
     schemaController.deletePropFromSchema

@@ -7,6 +7,7 @@ import dagre from '@dagrejs/dagre'
 
 type Props = {
     schema: Schema
+    hideCustom: Boolean
     children: (props: {
         nodes: SchemaNodeType[]
         edges: Edge[]
@@ -53,7 +54,7 @@ const getLayoutedElements = (
     return { nodes: newNodes, edges }
 }
 
-export const SchemaTreeFlow = ({ schema, children }: Props) => {
+export const SchemaTreeFlow = ({ schema, children, hideCustom }: Props) => {
     const [nodes, setNodes, onNodesChange] = useNodesState<SchemaNodeType>([])
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
@@ -70,36 +71,40 @@ export const SchemaTreeFlow = ({ schema, children }: Props) => {
         ]
         const initialEdges: Edge[] = []
 
-        iterateOverChildrenSchemas(schema, (schema, parentSchema) => {
-            initalNodes.push({
-                id: `${schema.alias}`,
-                position: { x: 0, y: 0 },
-                data: getCleanSchema(schema),
-                type: 'schema',
-                zIndex: 1,
-            })
-            initialEdges.push({
-                id: `${parentSchema.alias}-${schema.alias}`,
-                source: `${parentSchema.alias}`,
-                sourceHandle: 'hierarchy',
-                targetHandle: 'hierarchy',
-                target: `${schema.alias}`,
-            })
-            schema.props.forEach((prop) => {
-                if (prop.propValue?.schemaReferenceAlias && isReady) {
-                    initialEdges.push({
-                        id: `${schema.alias}-${prop.propValue.schemaReferenceAlias}-${prop.name}`,
-                        sourceHandle: `${prop.propValue.schemaReferenceAlias}-${prop.propValue.schemaReferenceField}`,
-                        targetHandle: `${schema.alias}-${prop.name}`,
-                        source: `${prop.propValue.schemaReferenceAlias}`,
-                        target: `${schema.alias}`,
-                        zIndex: 1000,
-                        type: 'step',
-                        animated: true,
-                    })
-                }
-            })
-        })
+        iterateOverChildrenSchemas(
+            schema,
+            (schema, parentSchema) => {
+                initalNodes.push({
+                    id: `${schema.alias}`,
+                    position: { x: 0, y: 0 },
+                    data: getCleanSchema(schema),
+                    type: 'schema',
+                    zIndex: 1,
+                })
+                initialEdges.push({
+                    id: `${parentSchema.alias}-${schema.alias}`,
+                    source: `${parentSchema.alias}`,
+                    sourceHandle: 'hierarchy',
+                    targetHandle: 'hierarchy',
+                    target: `${schema.alias}`,
+                })
+                schema.props.forEach((prop) => {
+                    if (prop.propValue?.schemaReferenceAlias && isReady) {
+                        initialEdges.push({
+                            id: `${schema.alias}-${prop.propValue.schemaReferenceAlias}-${prop.name}`,
+                            sourceHandle: `${prop.propValue.schemaReferenceAlias}-${prop.propValue.schemaReferenceField}`,
+                            targetHandle: `${schema.alias}-${prop.name}`,
+                            source: `${prop.propValue.schemaReferenceAlias}`,
+                            target: `${schema.alias}`,
+                            zIndex: 1000,
+                            type: 'step',
+                            animated: true,
+                        })
+                    }
+                })
+            },
+            (_, schema) => hideCustom && schema.Frame?.name === 'Frame'
+        )
 
         const layouted = getLayoutedElements(initalNodes, initialEdges)
 

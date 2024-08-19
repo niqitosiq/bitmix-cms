@@ -2,9 +2,14 @@ import { CleanSchema } from '@entities/Schema'
 import { useGetMapOfCurrentSchema } from '@features/GetMapOfCurrentSchema/useGetMapOfCurrentSchema'
 import { CodePosition } from '@shared/ui/CodePosition'
 import { Loading } from '@shared/ui/Loading'
+import {
+    findNodeAtPosition,
+    getResolvedType,
+} from '@shared/ui/TypescriptContext'
 import { useTSManipulator } from '@shared/ui/TypescriptContext/Typescript'
 import { useUpdateNodeInternals } from '@xyflow/react'
 import { useEffect, useState } from 'react'
+import ts from 'typescript'
 
 type Props = {
     schema: CleanSchema
@@ -16,6 +21,17 @@ const IGNORED_PROPS = ['children']
 export type TsProp = {
     name: string | undefined
     type: string | undefined
+}
+
+const getPlainType = (parts: ts.SymbolDisplayPart[] | undefined) => {
+    const propertyIndex = parts?.findIndex((p) => p.kind === 'propertyName')
+
+    if (!parts || !propertyIndex) return 'any'
+
+    return parts
+        ?.slice(propertyIndex + 1)
+        .map((p) => p.text)
+        .join('')
 }
 export const GetAvailablePropsForFrame = ({ schema, children }: Props) => {
     const [props, setProps] = useState<TsProp[]>([])
@@ -51,32 +67,54 @@ export const GetAvailablePropsForFrame = ({ schema, children }: Props) => {
             )
         })
 
-        setProps(
-            detailed
-                ?.filter((p) => p && !IGNORED_PROPS.includes(p?.name))
-                .map((p) => ({
-                    name: p?.name,
-                    type: p?.displayParts.map((p) => p.text).join(''),
-                })) || []
-        )
+        const sourceFile = manipulatorRef?.current?.languageService
+            .getProgram()
+            ?.getSourceFile('input.tsx')
+        const checker = manipulatorRef?.current?.languageService
+            .getProgram()
+            ?.getTypeChecker()
 
-        Object.entries(currentSchema.map.component.props).map(
-            ([name, value]) => {
-                const existingEntries = manipulatorRef?.current?.languageService
-                    .getQuickInfoAtPosition(
-                        'input.tsx',
-                        value[0] + extraLength - 2
-                    )
-                    ?.displayParts?.map((p) => p.text)
-                    .join('')
-
-                if (existingEntries)
-                    setProps((prev) => [
-                        ...prev,
-                        { name, type: existingEntries },
-                    ])
-            }
+        const node = findNodeAtPosition(
+            sourceFile!,
+            currentSchema?.map.component.own[1]! + extraLength - 2
         )
+        if (node && checker) {
+            const type = checker.getTypeAtLocation(node)
+
+            const resolvedType = getResolvedType(type, checker)
+
+            if (!resolvedType) return
+
+            const callDeclarations = resolvedType
+                .getCallSignatures()[0]
+                .getParameters()[0]
+                .getDeclarations()
+
+            if (!callDeclarations) return
+
+            const resolvedChildren = checker.getTypeOfSymbolAtLocation(
+                resolvedType.getCallSignatures()[0].getParameters()[0],
+                callDeclarations[0]
+            )
+
+            const properties = resolvedChildren
+                .getProperties()
+                .map((property) => {
+                    if (!property.getDeclarations()) return
+
+                    return {
+                        name: property.getName(),
+                        type: checker.typeToString(
+                            checker.getTypeOfSymbolAtLocation(
+                                property,
+                                property.getDeclarations()![0]
+                            )
+                        ),
+                    }
+                })
+
+            setProps(properties.filter((p) => !!p))
+        }
 
         setTimeout(() => {
             updateNodeInternals(schema.alias)

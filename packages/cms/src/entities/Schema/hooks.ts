@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
     addVisiblePropToSchema,
+    attachSchemaToSchema,
     createSchema,
     deleteSchema,
     deleteVisiblePropFromSchema,
     getSchema,
+    pinPropToCustomFrame,
 } from './api'
 import { Schema } from './types'
 import { Page } from '@entities/Page'
@@ -49,6 +51,19 @@ const useCreateSchema = () => {
     })
 }
 
+const useAttachSchema = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: attachSchemaToSchema,
+        onSuccess: (_, {}) => {
+            queryClient.invalidateQueries({
+                queryKey: ['schema'],
+            })
+        },
+    })
+}
+
 const useDeleteSchema = () => {
     const queryClient = useQueryClient()
 
@@ -88,10 +103,25 @@ const useDeleteVisiblePropFromSchema = () => {
     })
 }
 
+const usePinPropToCustomFrame = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: pinPropToCustomFrame,
+        onSuccess: (_, { schemaId }) => {
+            queryClient.invalidateQueries({
+                queryKey: ['schema'],
+            })
+        },
+    })
+}
+
 export {
     useGetSchema,
     useCreateSchema,
     useDeleteSchema,
     useAddVisiblePropToSchema,
     useDeleteVisiblePropFromSchema,
+    usePinPropToCustomFrame,
+    useAttachSchema,
 }

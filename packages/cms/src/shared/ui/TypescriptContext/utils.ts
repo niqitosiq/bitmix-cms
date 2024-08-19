@@ -1,7 +1,7 @@
 import { getCompilerOptionsFromParams } from '../../../../../../submodules/typescript-website/packages/sandbox/src/compilerOptions'
 import lzstring from 'lz-string'
 import { setupTypeAcquisition } from '../../../../../../submodules/typescript-website/packages/ata/src/index'
-import {
+import ts, {
     CompilerOptions,
     JsxEmit,
     ModuleKind,
@@ -209,4 +209,31 @@ export const createTypeScriptSandbox = async (
     )
 
     return { env, pullDependencies }
+}
+
+export function findNodeAtPosition(
+    sourceFile: ts.SourceFile,
+    position: number
+): ts.Node | undefined {
+    function find(node: ts.Node): ts.Node | undefined {
+        if (position >= node.getStart() && position < node.getEnd()) {
+            return ts.forEachChild(node, find) || node
+        }
+        return undefined
+    }
+    return find(sourceFile)
+}
+
+export function getResolvedType(type: ts.Type, checker: ts.TypeChecker) {
+    if (!type.symbol?.declarations) return null
+
+    const symbol = checker.getSymbolAtLocation(type.symbol.declarations[0])
+    if (symbol?.declarations) {
+        const typeOfSymbol = checker.getTypeOfSymbolAtLocation(
+            symbol,
+            symbol.declarations[0]
+        )
+        return typeOfSymbol
+    }
+    return type
 }

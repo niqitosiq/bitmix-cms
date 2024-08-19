@@ -14,12 +14,15 @@ export const getCleanSchema = (schema: Schema): CleanSchema => {
 
 export const iterateOverChildrenSchemas = (
     schema: Schema,
-    handler: (schema: Schema, parentSchema: Schema) => void
+    handler: (schema: Schema, parentSchema: Schema) => void,
+    condition?: (schema: Schema, parentSchema: Schema) => boolean
 ) => {
     if (schema.ChildrenSchema && schema.ChildrenSchema.length) {
         schema.ChildrenSchema.forEach((childSchema) => {
             handler(childSchema, schema)
-            iterateOverChildrenSchemas(childSchema, handler)
+            if (condition ? condition(childSchema, schema) : true) {
+                iterateOverChildrenSchemas(childSchema, handler)
+            }
         })
     }
 }

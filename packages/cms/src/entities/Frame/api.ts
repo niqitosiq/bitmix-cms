@@ -6,7 +6,7 @@ const getFrames = async (): Promise<Frame[]> => {
     return res.data
 }
 
-const getCustomFrames = async (): Promise<Frame[]> => {
+const getCustomFrames = async (): Promise<CustomFrame[]> => {
     const res = await api.get(`/frames/custom`)
     return res.data
 }

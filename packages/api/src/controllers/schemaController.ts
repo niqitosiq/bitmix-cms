@@ -189,7 +189,6 @@ export class SchemaController {
                             value: mockValue,
                             schemaReferenceAlias: reference?.schemaAlias,
                             schemaReferenceField: reference?.fieldName,
-                            type: type,
                         },
                     },
                 },
@@ -335,6 +334,167 @@ export class SchemaController {
             const frames = await prisma.customFrame.findMany()
 
             res.status(200).json(frames)
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async pinPropToCustomFrame(req: Request, res: Response) {
+        try {
+            const { schemaId, propName, propType } = req.body as {
+                schemaId: Schema['id']
+                propName: Prop['name']
+                propType: Prop['type']
+            }
+
+            console.log(schemaId, propName, propType)
+
+            const getSchema = async (schemaId: string) => {
+                const schema = await prisma.schema.findUnique({
+                    where: { id: schemaId },
+                    include: {
+                        Frame: true,
+                        ParentSchema: true,
+                    },
+                })
+                return schema
+            }
+
+            const findParentSchemaWithCustomFrame = async (
+                schemaId: string
+            ): Promise<Schema | null> => {
+                const schema = await getSchema(schemaId)
+
+                if (schema?.Frame?.name === 'Frame') {
+                    return schema
+                }
+
+                if (!schema) return null
+
+                const parentSchemas = await prisma.schema.findMany({
+                    where: {
+                        id: {
+                            in: schema?.ParentSchema.map((p) => p.id),
+                        },
+                    },
+                })
+
+                for (const parentSchema of parentSchemas) {
+                    const result = await findParentSchemaWithCustomFrame(
+                        parentSchema.id
+                    )
+                    if (result) {
+                        return result
+                    }
+                }
+
+                return null
+            }
+
+            const nearestSchemaWithFrame =
+                await findParentSchemaWithCustomFrame(schemaId)
+
+            if (!nearestSchemaWithFrame) {
+                res.status(404).json({ message: 'Schema not found' })
+                return
+            }
+
+            console.log(nearestSchemaWithFrame)
+
+            const existingProp = await prisma.prop.findFirst({
+                where: {
+                    Schema: {
+                        id: nearestSchemaWithFrame?.id,
+                    },
+                    name: propName,
+                },
+            })
+
+            if (existingProp) {
+                // delete
+                await prisma.prop.delete({
+                    where: { id: existingProp.id },
+                })
+            }
+
+            const propForFrameSchema = await prisma.prop.create({
+                data: {
+                    name: propName,
+                    type: propType,
+                    Schema: {
+                        connect: { id: nearestSchemaWithFrame.id },
+                    },
+                },
+            })
+
+            await prisma.visibleProp.create({
+                data: {
+                    name: propName,
+                    Schema: {
+                        connect: { id: nearestSchemaWithFrame.id },
+                    },
+                },
+            })
+
+            const propForNestedSchema = await prisma.prop.create({
+                data: {
+                    name: propName,
+                    type: propType,
+                    propValue: {
+                        create: {
+                            schemaReferenceAlias: nearestSchemaWithFrame.alias,
+                            schemaReferenceField: propName,
+                        },
+                    },
+                    Schema: {
+                        connect: { id: schemaId },
+                    },
+                },
+            })
+
+            res.status(204).end()
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    }
+
+    async attachSchemaToSchema(req: Request, res: Response) {
+        try {
+            const { parentSchemaId, childSchemaId } = req.body as {
+                parentSchemaId: Schema['id']
+                childSchemaId: Schema['id']
+            }
+
+            const parentSchema = await prisma.schema.findUnique({
+                where: { id: parentSchemaId },
+            })
+
+            if (!parentSchema) {
+                res.status(404).json({ message: 'Parent schema not found' })
+                return
+            }
+
+            const childSchema = await prisma.schema.findUnique({
+                where: { id: childSchemaId },
+            })
+
+            if (!childSchema) {
+                res.status(404).json({ message: 'Child schema not found' })
+                return
+            }
+
+            await prisma.schema.update({
+                where: { id: childSchemaId },
+                data: {
+                    ParentSchema: {
+                        connect: { id: parentSchemaId },
+                    },
+                },
+            })
+
+            res.status(204).end()
         } catch (error) {
             console.error(error)
             res.status(500).json({ message: 'Internal server error' })

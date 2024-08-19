@@ -57,6 +57,7 @@ model Prop {
   updatedAt   DateTime   @updatedAt
   Schema      Schema?    @relation(fields: [schemaId], references: [id])
   schemaId    String?
+  type        String?
   propValue   PropValue? @relation(fields: [propValueId], references: [id])
   propValueId String?    @unique
 }

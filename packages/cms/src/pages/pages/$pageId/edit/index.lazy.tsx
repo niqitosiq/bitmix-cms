@@ -33,7 +33,7 @@ const PageEditor = () => {
                         />
                     )}
 
-                    <ConfigureSchema id={page?.Schema.id!} />
+                    <ConfigureSchema id={page?.Schema.id!} hideCustom />
                 </Panel>
                 <PanelResizeHandle id="resize-handle" />
                 <Panel id="right-panel">

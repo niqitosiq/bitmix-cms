@@ -12,6 +12,7 @@ import { DeleteSchema } from '@features/DeleteSchema/DeleteSchema'
 import { GetAvailablePropsForFrame } from '@features/GetAvailablePropsForFrame'
 import { TsProp } from '@features/GetAvailablePropsForFrame/GetAvailablePropsForFrame'
 import { ManageSchemaVisibleProps } from '@features/ManageSchemaVisibleProps'
+import { PinPropValue } from '@features/PinPropValue'
 import { TranspileSchema } from '@features/TranspileSchema'
 import { UpdatePropViaMockValue } from '@features/UpdatePropViaMockValue'
 import { UpdateTSExecutable } from '@features/UpdateTSExecutable/UpdateTSExecutable'
@@ -92,6 +93,11 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
                                                             schemaId={data.id}
                                                             value={value}
                                                         />
+                                                        <PinPropValue
+                                                            propName={prop.name}
+                                                            propType={prop.type}
+                                                            schemaId={data.id}
+                                                        />
                                                     </PropIn>
                                                 )
                                             }
@@ -154,6 +160,7 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
 
 type Props = {
     id: Schema['id']
+    hideCustom: Boolean
 }
 
 const nodeTypes = {
@@ -164,7 +171,7 @@ const edgeTypes = {
     prop: memo(ButtonEdge),
 }
 
-export const ConfigureSchema = ({ id }: Props) => {
+export const ConfigureSchema = ({ id, hideCustom }: Props) => {
     const { data, isLoading } = useGetSchema(id)
 
     if (isLoading) {
@@ -180,7 +187,7 @@ export const ConfigureSchema = ({ id }: Props) => {
                         map={transpiled?.map}
                         schema={data!}
                     >
-                        <SchemaTreeFlow schema={data!}>
+                        <SchemaTreeFlow schema={data!} hideCustom={hideCustom}>
                             {({ nodes, edges }) => (
                                 <ConnectSchemaNodes nodes={nodes} edges={edges}>
                                     {({ onConnect }) => (
