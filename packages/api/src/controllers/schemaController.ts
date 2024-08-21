@@ -422,6 +422,11 @@ export class SchemaController {
                 data: {
                     name: propName,
                     type: propType,
+                    propValue: {
+                        create: {
+                            value: 'example',
+                        },
+                    },
                     Schema: {
                         connect: { id: nearestSchemaWithFrame.id },
                     },

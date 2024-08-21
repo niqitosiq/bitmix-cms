@@ -160,7 +160,7 @@ const SchemaNode = ({ data }: NodeProps<SchemaNodeType>) => {
 
 type Props = {
     id: Schema['id']
-    hideCustom: Boolean
+    hideCustom?: boolean
 }
 
 const nodeTypes = {
@@ -171,7 +171,7 @@ const edgeTypes = {
     prop: memo(ButtonEdge),
 }
 
-export const ConfigureSchema = ({ id, hideCustom }: Props) => {
+export const ConfigureSchema = ({ id, hideCustom = false }: Props) => {
     const { data, isLoading } = useGetSchema(id)
 
     if (isLoading) {

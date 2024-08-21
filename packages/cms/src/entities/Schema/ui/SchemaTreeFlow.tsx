@@ -103,7 +103,7 @@ export const SchemaTreeFlow = ({ schema, children, hideCustom }: Props) => {
                     }
                 })
             },
-            (_, schema) => hideCustom && schema.Frame?.name === 'Frame'
+            (schema) => (hideCustom ? schema.Frame?.name !== 'Frame' : true)
         )
 
         const layouted = getLayoutedElements(initalNodes, initialEdges)
