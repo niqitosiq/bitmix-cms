@@ -21,7 +21,6 @@
         "@tanstack/react-query-devtools": "^5.51.11",
         "@tanstack/router-plugin": "^1.45.8",
         "@typescript/vfs": "^1.6.0",
-        "@yworks/yfiles-layout-reactflow": "^1.0.3",
         "axios": "^1.7.2",
         "class-variance-authority": "^0.7.0",
         "classnames": "^2.5.1",
