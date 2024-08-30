@@ -1,12 +1,11 @@
-import { ComponentList } from '@widgets/ComponentList'
 import { SiteList } from '@widgets/SiteList'
+import { SidebarWithMenu } from '@widgets/SidebarWithMenu'
 
 export const Page = () => {
     return (
         <div>
-            <SiteList />
-
-            <ComponentList />
+            <SidebarWithMenu />
+            {/* <SiteList /> */}
         </div>
     )
 }

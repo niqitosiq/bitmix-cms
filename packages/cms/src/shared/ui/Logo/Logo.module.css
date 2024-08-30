@@ -1,0 +1,5 @@
+.text {
+    font-weight: 700;
+    font-size: var(--mantine-font-size-sm);
+    color: var(--mantine-color-text);
+}
