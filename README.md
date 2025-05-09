@@ -1,8 +1,4 @@
-# BitMix CMS
-
-<p align="center">
-  <img src="https://via.placeholder.com/200x200?text=BitMix+CMS" alt="BitMix CMS Logo" width="200" height="200">
-</p>
+# BitMix CMS 
 
 <p align="center">
   <strong>A modern, type-safe visual site builder and component composition system</strong>
